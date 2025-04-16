@@ -1,0 +1,14 @@
+{
+  "play": "Play",
+  "leaderboard": "Leaderboard",
+  "settings": "Settings",
+  "@play": {
+    "description": "Play button text"
+  },
+  "@leaderboard": {
+    "description": "Leaderboard button text"
+  },
+  "@settings": {
+    "description": "Settings button text"
+  }
+} 

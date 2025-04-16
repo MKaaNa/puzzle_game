@@ -21,7 +21,7 @@ class GameStats extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'Score: ${gameState.score}',
+            'Status: ${gameState.status.name}',
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 8),
