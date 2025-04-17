@@ -133,8 +133,51 @@ class GameNotifier extends StateNotifier<GameState> {
   }
   
   void useHint() {
-    if (state.hintCount > 0) {
-      state = state.copyWith(hintCount: state.hintCount - 1);
+    if (state.hintsRemaining <= 0 || !state.isActive || state.isComplete) return;
+
+    final correctMove = _findBestMove();
+    if (correctMove != null) {
+      final tileIndex = state.tiles.indexOf(correctMove.tile);
+      if (tileIndex != -1 && _isValidMove(tileIndex)) {
+        // Show hint overlay
+        state = state.copyWith(
+          isShowingHint: true,
+          hintTileIndex: tileIndex,
+          hintsRemaining: state.hintsRemaining - 1,
+        );
+
+        // Automatically move the tile after 2 seconds
+        Future.delayed(const Duration(milliseconds: 2000), () {
+          if (!mounted) return;
+          
+          // Remove hint overlay
+          state = state.copyWith(
+            isShowingHint: false,
+            hintTileIndex: null,
+          );
+          
+          // Move the tile
+          if (_isValidMove(tileIndex)) {
+            final newTiles = List<int>.from(state.tiles);
+            final emptyIndex = state.emptyTileIndex;
+            
+            // Swap tiles
+            newTiles[emptyIndex] = newTiles[tileIndex];
+            newTiles[tileIndex] = 0;
+            
+            state = state.copyWith(
+              tiles: newTiles,
+              emptyTileIndex: tileIndex,
+              moveCount: state.moveCount + 1,
+            );
+
+            // Check if puzzle is solved
+            if (_isPuzzleSolved()) {
+              _handleGameWin();
+            }
+          }
+        });
+      }
     }
   }
   

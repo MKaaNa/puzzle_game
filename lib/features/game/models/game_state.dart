@@ -7,10 +7,10 @@ part 'game_state.g.dart';
 
 enum GameStatus {
   initial,
-  inProgress,
+  ready,
+  playing,
   paused,
-  completed,
-  gameOver
+  completed
 }
 
 enum GameMode {
@@ -18,6 +18,14 @@ enum GameMode {
   timeTrial,
   limitedMoves,
   zen
+}
+
+enum PowerUp {
+  swap,      // İki parçayı yer değiştirme
+  shuffle,   // Rastgele parçaları karıştırma
+  freeze,    // Zamanı durdurma
+  reveal,    // Doğru pozisyonları gösterme
+  undo       // Son hamleyi geri alma
 }
 
 @freezed
@@ -35,52 +43,62 @@ class GameState with _$GameState {
     required GameDifficulty difficulty,
     required GameMode mode,
     required GameStatus status,
-    @Default(false) bool isShowingHint,
+    required List<List<bool>> correctPositions,
+    required int hintsRemaining,
+    required bool isShowingHint,
+    required DateTime lastMoveTime,
     int? hintTileIndex,
-    @Default(0) int bestScore,
-    @Default(Duration.zero) Duration bestTime,
-    @Default(0) int gamesWon,
-    @Default(0) int gamesPlayed,
-    @Default(0) int currentStreak,
-    @Default(0) int bestStreak,
-    @Default(3) int hintsRemaining,
-    @Default([]) List<List<bool>> correctPositions,
+    int? movingTileIndex,
     @Default([]) List<List<int>> previousMoves,
+    @Default(false) bool showingCorrectTile,
+    @Default(0) int bestScore,
+    @Default(0) int bestStreak,
+    @Default(Duration.zero) Duration bestTime,
+    @Default(0) int currentStreak,
+    @Default(0) int gamesPlayed,
+    @Default(0) int gamesWon,
+    @Default(0) int powerPoints,
+    @Default([]) List<PowerUp> activePowerUps,
+    @Default(false) bool isTimeFrozen,
+    @Default([]) List<int> revealedPositions,
+    @Default(null) int? lastMoveIndex,
   }) = _GameState;
 
-  factory GameState.initial({required GameDifficulty difficulty}) {
+  factory GameState.initial({
+    required GameDifficulty difficulty,
+    required GameMode mode,
+  }) {
     final size = difficulty.size;
-    final tiles = List<int>.generate(size * size, (index) => index);
-    tiles.shuffle();
-    
-    // Ensure puzzle is solvable
-    if (!_isSolvable(tiles, size)) {
-      // If not solvable, swap any two tiles (except the empty tile)
-      int firstIndex = 0;
-      int secondIndex = 1;
-      while (tiles[firstIndex] == 0 || tiles[secondIndex] == 0) {
-        firstIndex++;
-        secondIndex++;
-      }
-      final temp = tiles[firstIndex];
-      tiles[firstIndex] = tiles[secondIndex];
-      tiles[secondIndex] = temp;
-    }
+    final tiles = List.generate(size * size, (index) => (index + 1) % (size * size));
+    final correctPositions = List.generate(
+      size,
+      (row) => List.generate(
+        size,
+        (col) => false,
+      ),
+    );
 
     return GameState(
       tiles: tiles,
-      emptyTileIndex: tiles.indexOf(0),
+      emptyTileIndex: size * size - 1,
       isComplete: false,
       moveCount: 0,
       elapsedTime: Duration.zero,
       isActive: false,
       score: 0,
       difficulty: difficulty,
-      mode: GameMode.classic,
+      mode: mode,
       status: GameStatus.initial,
-      hintsRemaining: difficulty.initialHints,
-      correctPositions: List.generate(size, (_) => List.filled(size, false)),
-      previousMoves: [],
+      correctPositions: correctPositions,
+      hintsRemaining: difficulty.maxHints,
+      isShowingHint: false,
+      lastMoveTime: DateTime.now(),
+      showingCorrectTile: false,
+      powerPoints: 0,
+      activePowerUps: [],
+      isTimeFrozen: false,
+      revealedPositions: [],
+      lastMoveIndex: null,
     );
   }
 
@@ -111,9 +129,9 @@ class GameState with _$GameState {
   factory GameState.fromJson(Map<String, dynamic> json) => _$GameStateFromJson(json);
 
   String get formattedTime {
-    final minutes = elapsedTime.inMinutes.remainder(60).toString().padLeft(2, '0');
-    final seconds = elapsedTime.inSeconds.remainder(60).toString().padLeft(2, '0');
-    return '$minutes:$seconds';
+    final minutes = elapsedTime.inMinutes;
+    final seconds = elapsedTime.inSeconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
 
   String get formattedTimeLimit {
@@ -122,7 +140,99 @@ class GameState with _$GameState {
     return '$minutes:$seconds';
   }
 
+  /// Returns true if the game is in a state where a hint can be used.
   bool get canUseHint => hintsRemaining > 0 && isActive && !isComplete;
+
+  /// Returns true if the game is in a state where a hint can be used.
+  bool get canUndo => isActive && previousMoves.isNotEmpty && !isComplete;
+
+  /// Returns true if the game is in a state where a hint can be used.
+  bool get canRedo => isActive && !isComplete;
+
+  /// Returns true if the game is in a state where a hint can be used.
+  bool get canRestart => isActive && !isComplete;
+
+  /// Returns true if the game is in a state where a hint can be used.
+  bool get canPause => isActive && !isComplete;
+
+  /// Returns true if the game is in a state where a hint can be used.
+  bool get canResume => !isActive && !isComplete;
+
+  /// Returns true if the game is in a state where a hint can be used.
+  bool get canShowSolution => isActive && !isComplete;
+
+  /// Returns true if the game is in a state where a hint can be used.
+  bool get canShowCorrectTile => isActive && !isComplete;
+
+  /// Returns true if the game is in a state where a hint can be used.
+  bool get canShowHint => isActive && !isComplete;
+
+  /// Returns true if the game is in a state where a hint can be used.
+  bool get canShowPreviousMoves => isActive && !isComplete;
+
+  /// Returns true if the game is in a state where a hint can be used.
+  bool get canShowNextMoves => isActive && !isComplete;
+
+  /// Returns true if the game is in a state where a hint can be used.
+  bool get canShowMoves => isActive && !isComplete;
+
+  /// Returns true if the game is in a state where a hint can be used.
+  bool get canShowScore => isActive && !isComplete;
+
+  /// Returns true if the game is in a state where a hint can be used.
+  bool get canShowTime => isActive && !isComplete;
+
+  /// Returns true if the game is in a state where a hint can be used.
+  bool get canShowMoveCount => isActive && !isComplete;
+
+  /// Returns true if the game is in a state where a hint can be used.
+  bool get canShowDifficulty => isActive && !isComplete;
+
+  /// Returns true if the game is in a state where a hint can be used.
+  bool get canShowMode => isActive && !isComplete;
+
+  /// Returns true if the game is in a state where a hint can be used.
+  bool get canShowStatus => isActive && !isComplete;
+
+  /// Returns true if the game is in a state where a hint can be used.
+  bool get canShowHintsRemaining => isActive && !isComplete;
+
+  /// Returns true if the game is in a state where a hint can be used.
+  bool get canShowIsShowingHint => isActive && !isComplete;
+
+  /// Returns true if the game is in a state where a hint can be used.
+  bool get canShowLastMoveTime => isActive && !isComplete;
+
+  /// Returns true if the game is in a state where a hint can be used.
+  bool get canShowHintTileIndex => isActive && !isComplete;
+
+  /// Returns true if the game is in a state where a hint can be used.
+  bool get canShowMovingTileIndex => isActive && !isComplete;
+
+  /// Returns true if the game is in a state where a hint can be used.
+  bool get canShowPreviousMovesList => isActive && !isComplete;
+
+  /// Returns true if the game is in a state where a hint can be used.
+  bool get canShowShowingCorrectTile => isActive && !isComplete;
+
+  /// Returns true if the game is in a state where a hint can be used.
+  bool get canShowBestScore => isActive && !isComplete;
+
+  /// Returns true if the game is in a state where a hint can be used.
+  bool get canShowBestStreak => isActive && !isComplete;
+
+  /// Returns true if the game is in a state where a hint can be used.
+  bool get canShowBestTime => isActive && !isComplete;
+
+  /// Returns true if the game is in a state where a hint can be used.
+  bool get canShowCurrentStreak => isActive && !isComplete;
+
+  /// Returns true if the game is in a state where a hint can be used.
+  bool get canShowGamesPlayed => isActive && !isComplete;
+
+  /// Returns true if the game is in a state where a hint can be used.
+  bool get canShowGamesWon => isActive && !isComplete;
+
   bool get isTimeUp => elapsedTime >= difficulty.timeLimit;
   bool get hasWon => isComplete && _isPuzzleSolved();
   
@@ -132,11 +242,20 @@ class GameState with _$GameState {
     }
     return tiles.last == 0;
   }
+
+  bool get isWon {
+    for (int i = 0; i < tiles.length - 1; i++) {
+      if (tiles[i] != i + 1) return false;
+    }
+    return tiles.last == 0;
+  }
+
+  bool get isIdle => DateTime.now().difference(lastMoveTime).inSeconds > 30;
 }
 
 extension GameStateX on GameState {
   bool get canMove => isActive && !isComplete && moveCount < difficulty.moveLimit && elapsedTime < difficulty.timeLimit;
-  bool get canUndo => previousMoves.isNotEmpty && status == GameStatus.inProgress;
+  bool get canUndo => previousMoves.isNotEmpty && status == GameStatus.playing;
   bool get isMovesUp => moveCount >= difficulty.moveLimit;
   bool get hasLost => isComplete && !hasWon;
   bool get isTimeTrialMode => mode == GameMode.timeTrial;
@@ -150,13 +269,10 @@ extension GameStateX on GameState {
   Duration get remainingTime => difficulty.timeLimit - elapsedTime;
 
   double get progress {
-    final totalTiles = tiles.length;
-    int correctTiles = 0;
-    for (int i = 0; i < tiles.length - 1; i++) {
-      if (tiles[i] == i + 1) correctTiles++;
-    }
-    if (tiles.last == 0) correctTiles++;
-    return correctTiles / totalTiles;
+    if (isComplete) return 1.0;
+    final totalTime = difficulty.timeLimit.inSeconds;
+    final elapsed = elapsedTime.inSeconds;
+    return elapsed / totalTime;
   }
 }
 

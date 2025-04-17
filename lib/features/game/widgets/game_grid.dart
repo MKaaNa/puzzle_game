@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/game_provider.dart';
+import '../models/game_state.dart';
 
 class GameGrid extends ConsumerWidget {
   const GameGrid({super.key});
@@ -33,6 +34,9 @@ class GameGrid extends ConsumerWidget {
           itemBuilder: (context, index) {
             final number = gameState.tiles[index];
             final isEmptyTile = number == 0;
+            final isRevealed = gameState.revealedPositions.contains(index);
+            final isHintTile = gameState.hintTileIndex == index;
+            final isMovingTile = gameState.movingTileIndex == index;
 
             return AnimatedContainer(
               duration: const Duration(milliseconds: 200),
@@ -42,13 +46,22 @@ class GameGrid extends ConsumerWidget {
                     : Colors.white.withOpacity(0.15),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.3),
-                  width: 1,
+                  color: _getTileBorderColor(
+                    isEmptyTile: isEmptyTile,
+                    isRevealed: isRevealed,
+                    isHintTile: isHintTile,
+                    isMovingTile: isMovingTile,
+                  ),
+                  width: 2,
                 ),
                 boxShadow: [
                   if (!isEmptyTile)
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: _getTileShadowColor(
+                        isRevealed: isRevealed,
+                        isHintTile: isHintTile,
+                        isMovingTile: isMovingTile,
+                      ),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),
@@ -64,8 +77,12 @@ class GameGrid extends ConsumerWidget {
                         child: Center(
                           child: Text(
                             number.toString(),
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: _getTileTextColor(
+                                isRevealed: isRevealed,
+                                isHintTile: isHintTile,
+                                isMovingTile: isMovingTile,
+                              ),
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                             ),
@@ -78,5 +95,40 @@ class GameGrid extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  Color _getTileBorderColor({
+    required bool isEmptyTile,
+    required bool isRevealed,
+    required bool isHintTile,
+    required bool isMovingTile,
+  }) {
+    if (isEmptyTile) return Colors.transparent;
+    if (isMovingTile) return Colors.blue;
+    if (isHintTile) return Colors.purple;
+    if (isRevealed) return Colors.green;
+    return Colors.white.withOpacity(0.3);
+  }
+
+  Color _getTileShadowColor({
+    required bool isRevealed,
+    required bool isHintTile,
+    required bool isMovingTile,
+  }) {
+    if (isMovingTile) return Colors.blue.withOpacity(0.3);
+    if (isHintTile) return Colors.purple.withOpacity(0.3);
+    if (isRevealed) return Colors.green.withOpacity(0.3);
+    return Colors.black.withOpacity(0.1);
+  }
+
+  Color _getTileTextColor({
+    required bool isRevealed,
+    required bool isHintTile,
+    required bool isMovingTile,
+  }) {
+    if (isMovingTile) return Colors.blue;
+    if (isHintTile) return Colors.purple;
+    if (isRevealed) return Colors.green;
+    return Colors.white;
   }
 } 

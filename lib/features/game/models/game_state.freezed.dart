@@ -30,17 +30,25 @@ mixin _$GameState {
   GameDifficulty get difficulty => throw _privateConstructorUsedError;
   GameMode get mode => throw _privateConstructorUsedError;
   GameStatus get status => throw _privateConstructorUsedError;
-  bool get isShowingHint => throw _privateConstructorUsedError;
-  int? get hintTileIndex => throw _privateConstructorUsedError;
-  int get bestScore => throw _privateConstructorUsedError;
-  Duration get bestTime => throw _privateConstructorUsedError;
-  int get gamesWon => throw _privateConstructorUsedError;
-  int get gamesPlayed => throw _privateConstructorUsedError;
-  int get currentStreak => throw _privateConstructorUsedError;
-  int get bestStreak => throw _privateConstructorUsedError;
-  int get hintsRemaining => throw _privateConstructorUsedError;
   List<List<bool>> get correctPositions => throw _privateConstructorUsedError;
+  int get hintsRemaining => throw _privateConstructorUsedError;
+  bool get isShowingHint => throw _privateConstructorUsedError;
+  DateTime get lastMoveTime => throw _privateConstructorUsedError;
+  int? get hintTileIndex => throw _privateConstructorUsedError;
+  int? get movingTileIndex => throw _privateConstructorUsedError;
   List<List<int>> get previousMoves => throw _privateConstructorUsedError;
+  bool get showingCorrectTile => throw _privateConstructorUsedError;
+  int get bestScore => throw _privateConstructorUsedError;
+  int get bestStreak => throw _privateConstructorUsedError;
+  Duration get bestTime => throw _privateConstructorUsedError;
+  int get currentStreak => throw _privateConstructorUsedError;
+  int get gamesPlayed => throw _privateConstructorUsedError;
+  int get gamesWon => throw _privateConstructorUsedError;
+  int get powerPoints => throw _privateConstructorUsedError;
+  List<PowerUp> get activePowerUps => throw _privateConstructorUsedError;
+  bool get isTimeFrozen => throw _privateConstructorUsedError;
+  List<int> get revealedPositions => throw _privateConstructorUsedError;
+  int? get lastMoveIndex => throw _privateConstructorUsedError;
 
   /// Serializes this GameState to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -68,17 +76,25 @@ abstract class $GameStateCopyWith<$Res> {
       GameDifficulty difficulty,
       GameMode mode,
       GameStatus status,
-      bool isShowingHint,
-      int? hintTileIndex,
-      int bestScore,
-      Duration bestTime,
-      int gamesWon,
-      int gamesPlayed,
-      int currentStreak,
-      int bestStreak,
-      int hintsRemaining,
       List<List<bool>> correctPositions,
-      List<List<int>> previousMoves});
+      int hintsRemaining,
+      bool isShowingHint,
+      DateTime lastMoveTime,
+      int? hintTileIndex,
+      int? movingTileIndex,
+      List<List<int>> previousMoves,
+      bool showingCorrectTile,
+      int bestScore,
+      int bestStreak,
+      Duration bestTime,
+      int currentStreak,
+      int gamesPlayed,
+      int gamesWon,
+      int powerPoints,
+      List<PowerUp> activePowerUps,
+      bool isTimeFrozen,
+      List<int> revealedPositions,
+      int? lastMoveIndex});
 }
 
 /// @nodoc
@@ -106,17 +122,25 @@ class _$GameStateCopyWithImpl<$Res, $Val extends GameState>
     Object? difficulty = null,
     Object? mode = null,
     Object? status = null,
-    Object? isShowingHint = null,
-    Object? hintTileIndex = freezed,
-    Object? bestScore = null,
-    Object? bestTime = null,
-    Object? gamesWon = null,
-    Object? gamesPlayed = null,
-    Object? currentStreak = null,
-    Object? bestStreak = null,
-    Object? hintsRemaining = null,
     Object? correctPositions = null,
+    Object? hintsRemaining = null,
+    Object? isShowingHint = null,
+    Object? lastMoveTime = null,
+    Object? hintTileIndex = freezed,
+    Object? movingTileIndex = freezed,
     Object? previousMoves = null,
+    Object? showingCorrectTile = null,
+    Object? bestScore = null,
+    Object? bestStreak = null,
+    Object? bestTime = null,
+    Object? currentStreak = null,
+    Object? gamesPlayed = null,
+    Object? gamesWon = null,
+    Object? powerPoints = null,
+    Object? activePowerUps = null,
+    Object? isTimeFrozen = null,
+    Object? revealedPositions = null,
+    Object? lastMoveIndex = freezed,
   }) {
     return _then(_value.copyWith(
       tiles: null == tiles
@@ -159,50 +183,82 @@ class _$GameStateCopyWithImpl<$Res, $Val extends GameState>
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as GameStatus,
+      correctPositions: null == correctPositions
+          ? _value.correctPositions
+          : correctPositions // ignore: cast_nullable_to_non_nullable
+              as List<List<bool>>,
+      hintsRemaining: null == hintsRemaining
+          ? _value.hintsRemaining
+          : hintsRemaining // ignore: cast_nullable_to_non_nullable
+              as int,
       isShowingHint: null == isShowingHint
           ? _value.isShowingHint
           : isShowingHint // ignore: cast_nullable_to_non_nullable
               as bool,
+      lastMoveTime: null == lastMoveTime
+          ? _value.lastMoveTime
+          : lastMoveTime // ignore: cast_nullable_to_non_nullable
+              as DateTime,
       hintTileIndex: freezed == hintTileIndex
           ? _value.hintTileIndex
           : hintTileIndex // ignore: cast_nullable_to_non_nullable
               as int?,
+      movingTileIndex: freezed == movingTileIndex
+          ? _value.movingTileIndex
+          : movingTileIndex // ignore: cast_nullable_to_non_nullable
+              as int?,
+      previousMoves: null == previousMoves
+          ? _value.previousMoves
+          : previousMoves // ignore: cast_nullable_to_non_nullable
+              as List<List<int>>,
+      showingCorrectTile: null == showingCorrectTile
+          ? _value.showingCorrectTile
+          : showingCorrectTile // ignore: cast_nullable_to_non_nullable
+              as bool,
       bestScore: null == bestScore
           ? _value.bestScore
           : bestScore // ignore: cast_nullable_to_non_nullable
-              as int,
-      bestTime: null == bestTime
-          ? _value.bestTime
-          : bestTime // ignore: cast_nullable_to_non_nullable
-              as Duration,
-      gamesWon: null == gamesWon
-          ? _value.gamesWon
-          : gamesWon // ignore: cast_nullable_to_non_nullable
-              as int,
-      gamesPlayed: null == gamesPlayed
-          ? _value.gamesPlayed
-          : gamesPlayed // ignore: cast_nullable_to_non_nullable
-              as int,
-      currentStreak: null == currentStreak
-          ? _value.currentStreak
-          : currentStreak // ignore: cast_nullable_to_non_nullable
               as int,
       bestStreak: null == bestStreak
           ? _value.bestStreak
           : bestStreak // ignore: cast_nullable_to_non_nullable
               as int,
-      hintsRemaining: null == hintsRemaining
-          ? _value.hintsRemaining
-          : hintsRemaining // ignore: cast_nullable_to_non_nullable
+      bestTime: null == bestTime
+          ? _value.bestTime
+          : bestTime // ignore: cast_nullable_to_non_nullable
+              as Duration,
+      currentStreak: null == currentStreak
+          ? _value.currentStreak
+          : currentStreak // ignore: cast_nullable_to_non_nullable
               as int,
-      correctPositions: null == correctPositions
-          ? _value.correctPositions
-          : correctPositions // ignore: cast_nullable_to_non_nullable
-              as List<List<bool>>,
-      previousMoves: null == previousMoves
-          ? _value.previousMoves
-          : previousMoves // ignore: cast_nullable_to_non_nullable
-              as List<List<int>>,
+      gamesPlayed: null == gamesPlayed
+          ? _value.gamesPlayed
+          : gamesPlayed // ignore: cast_nullable_to_non_nullable
+              as int,
+      gamesWon: null == gamesWon
+          ? _value.gamesWon
+          : gamesWon // ignore: cast_nullable_to_non_nullable
+              as int,
+      powerPoints: null == powerPoints
+          ? _value.powerPoints
+          : powerPoints // ignore: cast_nullable_to_non_nullable
+              as int,
+      activePowerUps: null == activePowerUps
+          ? _value.activePowerUps
+          : activePowerUps // ignore: cast_nullable_to_non_nullable
+              as List<PowerUp>,
+      isTimeFrozen: null == isTimeFrozen
+          ? _value.isTimeFrozen
+          : isTimeFrozen // ignore: cast_nullable_to_non_nullable
+              as bool,
+      revealedPositions: null == revealedPositions
+          ? _value.revealedPositions
+          : revealedPositions // ignore: cast_nullable_to_non_nullable
+              as List<int>,
+      lastMoveIndex: freezed == lastMoveIndex
+          ? _value.lastMoveIndex
+          : lastMoveIndex // ignore: cast_nullable_to_non_nullable
+              as int?,
     ) as $Val);
   }
 }
@@ -226,17 +282,25 @@ abstract class _$$GameStateImplCopyWith<$Res>
       GameDifficulty difficulty,
       GameMode mode,
       GameStatus status,
-      bool isShowingHint,
-      int? hintTileIndex,
-      int bestScore,
-      Duration bestTime,
-      int gamesWon,
-      int gamesPlayed,
-      int currentStreak,
-      int bestStreak,
-      int hintsRemaining,
       List<List<bool>> correctPositions,
-      List<List<int>> previousMoves});
+      int hintsRemaining,
+      bool isShowingHint,
+      DateTime lastMoveTime,
+      int? hintTileIndex,
+      int? movingTileIndex,
+      List<List<int>> previousMoves,
+      bool showingCorrectTile,
+      int bestScore,
+      int bestStreak,
+      Duration bestTime,
+      int currentStreak,
+      int gamesPlayed,
+      int gamesWon,
+      int powerPoints,
+      List<PowerUp> activePowerUps,
+      bool isTimeFrozen,
+      List<int> revealedPositions,
+      int? lastMoveIndex});
 }
 
 /// @nodoc
@@ -262,17 +326,25 @@ class __$$GameStateImplCopyWithImpl<$Res>
     Object? difficulty = null,
     Object? mode = null,
     Object? status = null,
-    Object? isShowingHint = null,
-    Object? hintTileIndex = freezed,
-    Object? bestScore = null,
-    Object? bestTime = null,
-    Object? gamesWon = null,
-    Object? gamesPlayed = null,
-    Object? currentStreak = null,
-    Object? bestStreak = null,
-    Object? hintsRemaining = null,
     Object? correctPositions = null,
+    Object? hintsRemaining = null,
+    Object? isShowingHint = null,
+    Object? lastMoveTime = null,
+    Object? hintTileIndex = freezed,
+    Object? movingTileIndex = freezed,
     Object? previousMoves = null,
+    Object? showingCorrectTile = null,
+    Object? bestScore = null,
+    Object? bestStreak = null,
+    Object? bestTime = null,
+    Object? currentStreak = null,
+    Object? gamesPlayed = null,
+    Object? gamesWon = null,
+    Object? powerPoints = null,
+    Object? activePowerUps = null,
+    Object? isTimeFrozen = null,
+    Object? revealedPositions = null,
+    Object? lastMoveIndex = freezed,
   }) {
     return _then(_$GameStateImpl(
       tiles: null == tiles
@@ -315,50 +387,82 @@ class __$$GameStateImplCopyWithImpl<$Res>
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as GameStatus,
+      correctPositions: null == correctPositions
+          ? _value._correctPositions
+          : correctPositions // ignore: cast_nullable_to_non_nullable
+              as List<List<bool>>,
+      hintsRemaining: null == hintsRemaining
+          ? _value.hintsRemaining
+          : hintsRemaining // ignore: cast_nullable_to_non_nullable
+              as int,
       isShowingHint: null == isShowingHint
           ? _value.isShowingHint
           : isShowingHint // ignore: cast_nullable_to_non_nullable
               as bool,
+      lastMoveTime: null == lastMoveTime
+          ? _value.lastMoveTime
+          : lastMoveTime // ignore: cast_nullable_to_non_nullable
+              as DateTime,
       hintTileIndex: freezed == hintTileIndex
           ? _value.hintTileIndex
           : hintTileIndex // ignore: cast_nullable_to_non_nullable
               as int?,
+      movingTileIndex: freezed == movingTileIndex
+          ? _value.movingTileIndex
+          : movingTileIndex // ignore: cast_nullable_to_non_nullable
+              as int?,
+      previousMoves: null == previousMoves
+          ? _value._previousMoves
+          : previousMoves // ignore: cast_nullable_to_non_nullable
+              as List<List<int>>,
+      showingCorrectTile: null == showingCorrectTile
+          ? _value.showingCorrectTile
+          : showingCorrectTile // ignore: cast_nullable_to_non_nullable
+              as bool,
       bestScore: null == bestScore
           ? _value.bestScore
           : bestScore // ignore: cast_nullable_to_non_nullable
-              as int,
-      bestTime: null == bestTime
-          ? _value.bestTime
-          : bestTime // ignore: cast_nullable_to_non_nullable
-              as Duration,
-      gamesWon: null == gamesWon
-          ? _value.gamesWon
-          : gamesWon // ignore: cast_nullable_to_non_nullable
-              as int,
-      gamesPlayed: null == gamesPlayed
-          ? _value.gamesPlayed
-          : gamesPlayed // ignore: cast_nullable_to_non_nullable
-              as int,
-      currentStreak: null == currentStreak
-          ? _value.currentStreak
-          : currentStreak // ignore: cast_nullable_to_non_nullable
               as int,
       bestStreak: null == bestStreak
           ? _value.bestStreak
           : bestStreak // ignore: cast_nullable_to_non_nullable
               as int,
-      hintsRemaining: null == hintsRemaining
-          ? _value.hintsRemaining
-          : hintsRemaining // ignore: cast_nullable_to_non_nullable
+      bestTime: null == bestTime
+          ? _value.bestTime
+          : bestTime // ignore: cast_nullable_to_non_nullable
+              as Duration,
+      currentStreak: null == currentStreak
+          ? _value.currentStreak
+          : currentStreak // ignore: cast_nullable_to_non_nullable
               as int,
-      correctPositions: null == correctPositions
-          ? _value._correctPositions
-          : correctPositions // ignore: cast_nullable_to_non_nullable
-              as List<List<bool>>,
-      previousMoves: null == previousMoves
-          ? _value._previousMoves
-          : previousMoves // ignore: cast_nullable_to_non_nullable
-              as List<List<int>>,
+      gamesPlayed: null == gamesPlayed
+          ? _value.gamesPlayed
+          : gamesPlayed // ignore: cast_nullable_to_non_nullable
+              as int,
+      gamesWon: null == gamesWon
+          ? _value.gamesWon
+          : gamesWon // ignore: cast_nullable_to_non_nullable
+              as int,
+      powerPoints: null == powerPoints
+          ? _value.powerPoints
+          : powerPoints // ignore: cast_nullable_to_non_nullable
+              as int,
+      activePowerUps: null == activePowerUps
+          ? _value._activePowerUps
+          : activePowerUps // ignore: cast_nullable_to_non_nullable
+              as List<PowerUp>,
+      isTimeFrozen: null == isTimeFrozen
+          ? _value.isTimeFrozen
+          : isTimeFrozen // ignore: cast_nullable_to_non_nullable
+              as bool,
+      revealedPositions: null == revealedPositions
+          ? _value._revealedPositions
+          : revealedPositions // ignore: cast_nullable_to_non_nullable
+              as List<int>,
+      lastMoveIndex: freezed == lastMoveIndex
+          ? _value.lastMoveIndex
+          : lastMoveIndex // ignore: cast_nullable_to_non_nullable
+              as int?,
     ));
   }
 }
@@ -377,20 +481,30 @@ class _$GameStateImpl extends _GameState with DiagnosticableTreeMixin {
       required this.difficulty,
       required this.mode,
       required this.status,
-      this.isShowingHint = false,
+      required final List<List<bool>> correctPositions,
+      required this.hintsRemaining,
+      required this.isShowingHint,
+      required this.lastMoveTime,
       this.hintTileIndex,
+      this.movingTileIndex,
+      final List<List<int>> previousMoves = const [],
+      this.showingCorrectTile = false,
       this.bestScore = 0,
-      this.bestTime = Duration.zero,
-      this.gamesWon = 0,
-      this.gamesPlayed = 0,
-      this.currentStreak = 0,
       this.bestStreak = 0,
-      this.hintsRemaining = 3,
-      final List<List<bool>> correctPositions = const [],
-      final List<List<int>> previousMoves = const []})
+      this.bestTime = Duration.zero,
+      this.currentStreak = 0,
+      this.gamesPlayed = 0,
+      this.gamesWon = 0,
+      this.powerPoints = 0,
+      final List<PowerUp> activePowerUps = const [],
+      this.isTimeFrozen = false,
+      final List<int> revealedPositions = const [],
+      this.lastMoveIndex = null})
       : _tiles = tiles,
         _correctPositions = correctPositions,
         _previousMoves = previousMoves,
+        _activePowerUps = activePowerUps,
+        _revealedPositions = revealedPositions,
         super._();
 
   factory _$GameStateImpl.fromJson(Map<String, dynamic> json) =>
@@ -422,35 +536,8 @@ class _$GameStateImpl extends _GameState with DiagnosticableTreeMixin {
   final GameMode mode;
   @override
   final GameStatus status;
-  @override
-  @JsonKey()
-  final bool isShowingHint;
-  @override
-  final int? hintTileIndex;
-  @override
-  @JsonKey()
-  final int bestScore;
-  @override
-  @JsonKey()
-  final Duration bestTime;
-  @override
-  @JsonKey()
-  final int gamesWon;
-  @override
-  @JsonKey()
-  final int gamesPlayed;
-  @override
-  @JsonKey()
-  final int currentStreak;
-  @override
-  @JsonKey()
-  final int bestStreak;
-  @override
-  @JsonKey()
-  final int hintsRemaining;
   final List<List<bool>> _correctPositions;
   @override
-  @JsonKey()
   List<List<bool>> get correctPositions {
     if (_correctPositions is EqualUnmodifiableListView)
       return _correctPositions;
@@ -458,6 +545,16 @@ class _$GameStateImpl extends _GameState with DiagnosticableTreeMixin {
     return EqualUnmodifiableListView(_correctPositions);
   }
 
+  @override
+  final int hintsRemaining;
+  @override
+  final bool isShowingHint;
+  @override
+  final DateTime lastMoveTime;
+  @override
+  final int? hintTileIndex;
+  @override
+  final int? movingTileIndex;
   final List<List<int>> _previousMoves;
   @override
   @JsonKey()
@@ -468,8 +565,58 @@ class _$GameStateImpl extends _GameState with DiagnosticableTreeMixin {
   }
 
   @override
+  @JsonKey()
+  final bool showingCorrectTile;
+  @override
+  @JsonKey()
+  final int bestScore;
+  @override
+  @JsonKey()
+  final int bestStreak;
+  @override
+  @JsonKey()
+  final Duration bestTime;
+  @override
+  @JsonKey()
+  final int currentStreak;
+  @override
+  @JsonKey()
+  final int gamesPlayed;
+  @override
+  @JsonKey()
+  final int gamesWon;
+  @override
+  @JsonKey()
+  final int powerPoints;
+  final List<PowerUp> _activePowerUps;
+  @override
+  @JsonKey()
+  List<PowerUp> get activePowerUps {
+    if (_activePowerUps is EqualUnmodifiableListView) return _activePowerUps;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_activePowerUps);
+  }
+
+  @override
+  @JsonKey()
+  final bool isTimeFrozen;
+  final List<int> _revealedPositions;
+  @override
+  @JsonKey()
+  List<int> get revealedPositions {
+    if (_revealedPositions is EqualUnmodifiableListView)
+      return _revealedPositions;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_revealedPositions);
+  }
+
+  @override
+  @JsonKey()
+  final int? lastMoveIndex;
+
+  @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'GameState(tiles: $tiles, emptyTileIndex: $emptyTileIndex, isComplete: $isComplete, moveCount: $moveCount, elapsedTime: $elapsedTime, isActive: $isActive, score: $score, difficulty: $difficulty, mode: $mode, status: $status, isShowingHint: $isShowingHint, hintTileIndex: $hintTileIndex, bestScore: $bestScore, bestTime: $bestTime, gamesWon: $gamesWon, gamesPlayed: $gamesPlayed, currentStreak: $currentStreak, bestStreak: $bestStreak, hintsRemaining: $hintsRemaining, correctPositions: $correctPositions, previousMoves: $previousMoves)';
+    return 'GameState(tiles: $tiles, emptyTileIndex: $emptyTileIndex, isComplete: $isComplete, moveCount: $moveCount, elapsedTime: $elapsedTime, isActive: $isActive, score: $score, difficulty: $difficulty, mode: $mode, status: $status, correctPositions: $correctPositions, hintsRemaining: $hintsRemaining, isShowingHint: $isShowingHint, lastMoveTime: $lastMoveTime, hintTileIndex: $hintTileIndex, movingTileIndex: $movingTileIndex, previousMoves: $previousMoves, showingCorrectTile: $showingCorrectTile, bestScore: $bestScore, bestStreak: $bestStreak, bestTime: $bestTime, currentStreak: $currentStreak, gamesPlayed: $gamesPlayed, gamesWon: $gamesWon, powerPoints: $powerPoints, activePowerUps: $activePowerUps, isTimeFrozen: $isTimeFrozen, revealedPositions: $revealedPositions, lastMoveIndex: $lastMoveIndex)';
   }
 
   @override
@@ -487,17 +634,25 @@ class _$GameStateImpl extends _GameState with DiagnosticableTreeMixin {
       ..add(DiagnosticsProperty('difficulty', difficulty))
       ..add(DiagnosticsProperty('mode', mode))
       ..add(DiagnosticsProperty('status', status))
-      ..add(DiagnosticsProperty('isShowingHint', isShowingHint))
-      ..add(DiagnosticsProperty('hintTileIndex', hintTileIndex))
-      ..add(DiagnosticsProperty('bestScore', bestScore))
-      ..add(DiagnosticsProperty('bestTime', bestTime))
-      ..add(DiagnosticsProperty('gamesWon', gamesWon))
-      ..add(DiagnosticsProperty('gamesPlayed', gamesPlayed))
-      ..add(DiagnosticsProperty('currentStreak', currentStreak))
-      ..add(DiagnosticsProperty('bestStreak', bestStreak))
-      ..add(DiagnosticsProperty('hintsRemaining', hintsRemaining))
       ..add(DiagnosticsProperty('correctPositions', correctPositions))
-      ..add(DiagnosticsProperty('previousMoves', previousMoves));
+      ..add(DiagnosticsProperty('hintsRemaining', hintsRemaining))
+      ..add(DiagnosticsProperty('isShowingHint', isShowingHint))
+      ..add(DiagnosticsProperty('lastMoveTime', lastMoveTime))
+      ..add(DiagnosticsProperty('hintTileIndex', hintTileIndex))
+      ..add(DiagnosticsProperty('movingTileIndex', movingTileIndex))
+      ..add(DiagnosticsProperty('previousMoves', previousMoves))
+      ..add(DiagnosticsProperty('showingCorrectTile', showingCorrectTile))
+      ..add(DiagnosticsProperty('bestScore', bestScore))
+      ..add(DiagnosticsProperty('bestStreak', bestStreak))
+      ..add(DiagnosticsProperty('bestTime', bestTime))
+      ..add(DiagnosticsProperty('currentStreak', currentStreak))
+      ..add(DiagnosticsProperty('gamesPlayed', gamesPlayed))
+      ..add(DiagnosticsProperty('gamesWon', gamesWon))
+      ..add(DiagnosticsProperty('powerPoints', powerPoints))
+      ..add(DiagnosticsProperty('activePowerUps', activePowerUps))
+      ..add(DiagnosticsProperty('isTimeFrozen', isTimeFrozen))
+      ..add(DiagnosticsProperty('revealedPositions', revealedPositions))
+      ..add(DiagnosticsProperty('lastMoveIndex', lastMoveIndex));
   }
 
   @override
@@ -521,28 +676,44 @@ class _$GameStateImpl extends _GameState with DiagnosticableTreeMixin {
                 other.difficulty == difficulty) &&
             (identical(other.mode, mode) || other.mode == mode) &&
             (identical(other.status, status) || other.status == status) &&
-            (identical(other.isShowingHint, isShowingHint) ||
-                other.isShowingHint == isShowingHint) &&
-            (identical(other.hintTileIndex, hintTileIndex) ||
-                other.hintTileIndex == hintTileIndex) &&
-            (identical(other.bestScore, bestScore) ||
-                other.bestScore == bestScore) &&
-            (identical(other.bestTime, bestTime) ||
-                other.bestTime == bestTime) &&
-            (identical(other.gamesWon, gamesWon) ||
-                other.gamesWon == gamesWon) &&
-            (identical(other.gamesPlayed, gamesPlayed) ||
-                other.gamesPlayed == gamesPlayed) &&
-            (identical(other.currentStreak, currentStreak) ||
-                other.currentStreak == currentStreak) &&
-            (identical(other.bestStreak, bestStreak) ||
-                other.bestStreak == bestStreak) &&
-            (identical(other.hintsRemaining, hintsRemaining) ||
-                other.hintsRemaining == hintsRemaining) &&
             const DeepCollectionEquality()
                 .equals(other._correctPositions, _correctPositions) &&
+            (identical(other.hintsRemaining, hintsRemaining) ||
+                other.hintsRemaining == hintsRemaining) &&
+            (identical(other.isShowingHint, isShowingHint) ||
+                other.isShowingHint == isShowingHint) &&
+            (identical(other.lastMoveTime, lastMoveTime) ||
+                other.lastMoveTime == lastMoveTime) &&
+            (identical(other.hintTileIndex, hintTileIndex) ||
+                other.hintTileIndex == hintTileIndex) &&
+            (identical(other.movingTileIndex, movingTileIndex) ||
+                other.movingTileIndex == movingTileIndex) &&
             const DeepCollectionEquality()
-                .equals(other._previousMoves, _previousMoves));
+                .equals(other._previousMoves, _previousMoves) &&
+            (identical(other.showingCorrectTile, showingCorrectTile) ||
+                other.showingCorrectTile == showingCorrectTile) &&
+            (identical(other.bestScore, bestScore) ||
+                other.bestScore == bestScore) &&
+            (identical(other.bestStreak, bestStreak) ||
+                other.bestStreak == bestStreak) &&
+            (identical(other.bestTime, bestTime) ||
+                other.bestTime == bestTime) &&
+            (identical(other.currentStreak, currentStreak) ||
+                other.currentStreak == currentStreak) &&
+            (identical(other.gamesPlayed, gamesPlayed) ||
+                other.gamesPlayed == gamesPlayed) &&
+            (identical(other.gamesWon, gamesWon) ||
+                other.gamesWon == gamesWon) &&
+            (identical(other.powerPoints, powerPoints) ||
+                other.powerPoints == powerPoints) &&
+            const DeepCollectionEquality()
+                .equals(other._activePowerUps, _activePowerUps) &&
+            (identical(other.isTimeFrozen, isTimeFrozen) ||
+                other.isTimeFrozen == isTimeFrozen) &&
+            const DeepCollectionEquality()
+                .equals(other._revealedPositions, _revealedPositions) &&
+            (identical(other.lastMoveIndex, lastMoveIndex) ||
+                other.lastMoveIndex == lastMoveIndex));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -559,17 +730,25 @@ class _$GameStateImpl extends _GameState with DiagnosticableTreeMixin {
         difficulty,
         mode,
         status,
-        isShowingHint,
-        hintTileIndex,
-        bestScore,
-        bestTime,
-        gamesWon,
-        gamesPlayed,
-        currentStreak,
-        bestStreak,
-        hintsRemaining,
         const DeepCollectionEquality().hash(_correctPositions),
-        const DeepCollectionEquality().hash(_previousMoves)
+        hintsRemaining,
+        isShowingHint,
+        lastMoveTime,
+        hintTileIndex,
+        movingTileIndex,
+        const DeepCollectionEquality().hash(_previousMoves),
+        showingCorrectTile,
+        bestScore,
+        bestStreak,
+        bestTime,
+        currentStreak,
+        gamesPlayed,
+        gamesWon,
+        powerPoints,
+        const DeepCollectionEquality().hash(_activePowerUps),
+        isTimeFrozen,
+        const DeepCollectionEquality().hash(_revealedPositions),
+        lastMoveIndex
       ]);
 
   /// Create a copy of GameState
@@ -600,17 +779,25 @@ abstract class _GameState extends GameState {
       required final GameDifficulty difficulty,
       required final GameMode mode,
       required final GameStatus status,
-      final bool isShowingHint,
+      required final List<List<bool>> correctPositions,
+      required final int hintsRemaining,
+      required final bool isShowingHint,
+      required final DateTime lastMoveTime,
       final int? hintTileIndex,
+      final int? movingTileIndex,
+      final List<List<int>> previousMoves,
+      final bool showingCorrectTile,
       final int bestScore,
-      final Duration bestTime,
-      final int gamesWon,
-      final int gamesPlayed,
-      final int currentStreak,
       final int bestStreak,
-      final int hintsRemaining,
-      final List<List<bool>> correctPositions,
-      final List<List<int>> previousMoves}) = _$GameStateImpl;
+      final Duration bestTime,
+      final int currentStreak,
+      final int gamesPlayed,
+      final int gamesWon,
+      final int powerPoints,
+      final List<PowerUp> activePowerUps,
+      final bool isTimeFrozen,
+      final List<int> revealedPositions,
+      final int? lastMoveIndex}) = _$GameStateImpl;
   const _GameState._() : super._();
 
   factory _GameState.fromJson(Map<String, dynamic> json) =
@@ -637,27 +824,43 @@ abstract class _GameState extends GameState {
   @override
   GameStatus get status;
   @override
-  bool get isShowingHint;
-  @override
-  int? get hintTileIndex;
-  @override
-  int get bestScore;
-  @override
-  Duration get bestTime;
-  @override
-  int get gamesWon;
-  @override
-  int get gamesPlayed;
-  @override
-  int get currentStreak;
-  @override
-  int get bestStreak;
+  List<List<bool>> get correctPositions;
   @override
   int get hintsRemaining;
   @override
-  List<List<bool>> get correctPositions;
+  bool get isShowingHint;
+  @override
+  DateTime get lastMoveTime;
+  @override
+  int? get hintTileIndex;
+  @override
+  int? get movingTileIndex;
   @override
   List<List<int>> get previousMoves;
+  @override
+  bool get showingCorrectTile;
+  @override
+  int get bestScore;
+  @override
+  int get bestStreak;
+  @override
+  Duration get bestTime;
+  @override
+  int get currentStreak;
+  @override
+  int get gamesPlayed;
+  @override
+  int get gamesWon;
+  @override
+  int get powerPoints;
+  @override
+  List<PowerUp> get activePowerUps;
+  @override
+  bool get isTimeFrozen;
+  @override
+  List<int> get revealedPositions;
+  @override
+  int? get lastMoveIndex;
 
   /// Create a copy of GameState
   /// with the given fields replaced by the non-null parameter values.

@@ -46,6 +46,30 @@ class $AssetsImagesMascotGen {
   AssetGenImage get mascot =>
       const AssetGenImage('assets/images/mascot/mascot.png');
 
+  /// File path: assets/images/mascot/mascot_bored.png
+  AssetGenImage get mascotBored =>
+      const AssetGenImage('assets/images/mascot/mascot_bored.png');
+
+  /// File path: assets/images/mascot/mascot_celebrating.png
+  AssetGenImage get mascotCelebrating =>
+      const AssetGenImage('assets/images/mascot/mascot_celebrating.png');
+
+  /// File path: assets/images/mascot/mascot_excited.png
+  AssetGenImage get mascotExcited =>
+      const AssetGenImage('assets/images/mascot/mascot_excited.png');
+
+  /// File path: assets/images/mascot/mascot_hint.png
+  AssetGenImage get mascotHint =>
+      const AssetGenImage('assets/images/mascot/mascot_hint.png');
+
+  /// File path: assets/images/mascot/mascot_normal.png
+  AssetGenImage get mascotNormal =>
+      const AssetGenImage('assets/images/mascot/mascot_normal.png');
+
+  /// File path: assets/images/mascot/mascot_return.png
+  AssetGenImage get mascotReturn =>
+      const AssetGenImage('assets/images/mascot/mascot_return.png');
+
   /// File path: assets/images/mascot/mascott.png
   AssetGenImage get mascott =>
       const AssetGenImage('assets/images/mascot/mascott.png');
@@ -55,7 +79,17 @@ class $AssetsImagesMascotGen {
       const AssetGenImage('assets/images/mascot/maskotit.png');
 
   /// List of all assets
-  List<AssetGenImage> get values => [mascot, mascott, maskotit];
+  List<AssetGenImage> get values => [
+        mascot,
+        mascotBored,
+        mascotCelebrating,
+        mascotExcited,
+        mascotHint,
+        mascotNormal,
+        mascotReturn,
+        mascott,
+        maskotit
+      ];
 }
 
 class Assets {

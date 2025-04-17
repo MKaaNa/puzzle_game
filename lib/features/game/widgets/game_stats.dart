@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/game_provider.dart';
+import '../models/game_state.dart';
 
-class GameStats extends ConsumerWidget {
-  const GameStats({super.key});
+class GameStats extends StatelessWidget {
+  final GameState gameState;
+
+  const GameStats({
+    super.key,
+    required this.gameState,
+  });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final gameState = ref.watch(gameProvider);
-
+  Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(

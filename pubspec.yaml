@@ -93,8 +93,9 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/images/
+    - assets/images/mascot/
     - assets/animations/
+    - assets/images/
     - assets/sounds/
     - assets/icons/
     - assets/fonts/
@@ -102,6 +103,8 @@ flutter:
     - assets/images/mascot/mascot.png
     - assets/images/mascot/mascott.png
     - assets/images/mascot/maskotit.png
+    - assets/images/mascot/mascot_hint.png
+    - assets/images/mascot/mascot_return.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

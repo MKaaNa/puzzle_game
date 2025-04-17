@@ -94,7 +94,7 @@ class PuzzleGameScreen extends ConsumerWidget {
             tooltip: 'Leaderboard',
           ),
           // Pause/Resume button (only shown when game is in progress or paused)
-          if (gameState.status == GameStatus.inProgress || 
+          if (gameState.status == GameStatus.playing || 
               gameState.status == GameStatus.paused)
             IconButton(
               icon: Icon(
@@ -152,7 +152,7 @@ class PuzzleGameScreen extends ConsumerWidget {
   }
 
   Widget _buildGameStatsPanel(BuildContext context, GameState gameState) {
-    final isGameActive = gameState.status == GameStatus.inProgress ||
+    final isGameActive = gameState.status == GameStatus.playing ||
                         gameState.status == GameStatus.paused;
     
     return Container(

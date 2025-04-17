@@ -1,17 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:puzzle_game/features/game/providers/game_provider.dart';
-import 'package:puzzle_game/features/game/widgets/game_controls.dart';
-import 'package:puzzle_game/features/game/widgets/game_stats.dart';
-import 'package:puzzle_game/features/game/widgets/puzzle_grid.dart';
-import 'package:puzzle_game/features/game/widgets/hint_mascot.dart';
+import '../providers/game_provider.dart';
+import '../widgets/game_controls.dart';
+import '../widgets/game_stats.dart';
+import '../widgets/puzzle_grid.dart';
+import '../widgets/hint_mascot.dart';
+import '../models/game_state.dart';
 import 'dart:math';
+import '../widgets/game_mascot.dart';
+import '../widgets/tutorial_overlay.dart';
 
-class GameScreen extends ConsumerWidget {
+class GameScreen extends ConsumerStatefulWidget {
   const GameScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<GameScreen> createState() => _GameScreenState();
+}
+
+class _GameScreenState extends ConsumerState<GameScreen> {
+  bool _showTutorial = true;
+
+  @override
+  void initState() {
+    super.initState();
+    // Oyunu başlat
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(gameProvider.notifier).startGame();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final gameState = ref.watch(gameProvider);
     final gameNotifier = ref.read(gameProvider.notifier);
 
@@ -31,71 +50,88 @@ class GameScreen extends ConsumerWidget {
             ),
           ],
         ),
-        body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                const Color(0xFF6A1B9A), // Deep Purple
-                const Color(0xFF9C27B0), // Medium Purple
-                const Color(0xFFAB47BC), // Light Purple
-              ],
-              stops: const [0.0, 0.6, 1.0],
+        body: Stack(
+          children: [
+            // Arka plan
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    const Color(0xFF6A1B9A), // Deep Purple
+                    const Color(0xFF9C27B0), // Medium Purple
+                    const Color(0xFFAB47BC), // Light Purple
+                  ],
+                  stops: const [0.0, 0.6, 1.0],
+                ),
+              ),
             ),
-          ),
-          child: SafeArea(
-            child: Stack(
-              children: [
-                Column(
-                  children: [
-                    const GameStats(),
-                    const SizedBox(height: 20),
-                    Expanded(
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          final size = sqrt(gameState.tiles.length).toInt();
-                          final tileSize = constraints.maxWidth / size;
-                          
-                          return Stack(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: AspectRatio(
-                                  aspectRatio: 1,
-                                  child: PuzzleGrid(
-                                    puzzle: _convertTilesToGrid(gameState.tiles),
-                                    onTileTap: (row, col) {
-                                      final index = row * size + col;
-                                      gameNotifier.moveTile(index);
-                                    },
-                                    correctPositions: _convertCorrectPositions(gameState.correctPositions),
-                                  ),
+            
+            // Ana içerik
+            SafeArea(
+              child: Column(
+                children: [
+                  // Oyun istatistikleri
+                  GameStats(gameState: gameState),
+                  
+                  // Oyun ızgarası
+                  Expanded(
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final size = sqrt(gameState.tiles.length).toInt();
+                        
+                        return Stack(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: AspectRatio(
+                                aspectRatio: 1,
+                                child: PuzzleGrid(
+                                  puzzle: _convertTilesToGrid(gameState.tiles),
+                                  onTileTap: (row, col) {
+                                    if (!gameState.isActive) {
+                                      gameNotifier.startGame();
+                                      return;
+                                    }
+                                    final index = row * size + col;
+                                    gameNotifier.moveTile(index);
+                                  },
+                                  correctPositions: _convertCorrectPositions(gameState.correctPositions),
+                                  movingTileIndex: gameState.movingTileIndex,
                                 ),
                               ),
-                              if (gameState.isShowingHint && gameState.hintTileIndex != null)
-                                Positioned.fill(
-                                  child: HintMascot(
-                                    targetPosition: _calculateTilePosition(
-                                      gameState.hintTileIndex!,
-                                      constraints.maxWidth - 32, // Padding'i çıkar
-                                      constraints.maxHeight,
-                                    ),
-                                    onAnimationComplete: gameNotifier.onHintAnimationComplete,
-                                  ),
-                                ),
-                            ],
-                          );
-                        },
-                      ),
+                            ),
+                            
+                            // Maskot overlay (sadece gerekli durumlarda)
+                            if (gameState.isShowingHint || gameState.isComplete || 
+                                gameState.isIdle || gameState.showingCorrectTile)
+                              Positioned.fill(
+                                child: GameMascot(),
+                              ),
+                          ],
+                        );
+                      },
                     ),
-                    const SizedBox(height: 20),
-                    const GameControls(),
-                  ],
-                ),
-              ],
+                  ),
+                  
+                  // Oyun kontrolleri
+                  GameControls(gameState: gameState),
+                ],
+              ),
             ),
-          ),
+            // Eğitim overlay'i
+            if (_showTutorial)
+              TutorialOverlay(),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            setState(() {
+              _showTutorial = !_showTutorial;
+            });
+          },
+          child: Icon(_showTutorial ? Icons.visibility_off : Icons.help_outline),
         ),
       ),
     );
