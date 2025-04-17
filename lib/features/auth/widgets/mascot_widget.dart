@@ -17,7 +17,7 @@ class _MascotWidgetState extends State<MascotWidget> with SingleTickerProviderSt
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
-    )..repeat();
+    )..repeat(reverse: true);
   }
 
   @override
@@ -28,19 +28,40 @@ class _MascotWidgetState extends State<MascotWidget> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) {
-        return Transform.translate(
-          offset: Offset(0, 10 * _controller.value),
-          child: Lottie.asset(
-            'assets/animations/mascot.json',
-            width: 200,
-            height: 200,
-            fit: BoxFit.contain,
-          ),
-        );
-      },
+    final size = MediaQuery.of(context).size;
+    final mascotSize = size.width * 0.4;
+
+    return Container(
+      width: mascotSize,
+      height: mascotSize,
+      margin: const EdgeInsets.only(bottom: 20),
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          return Transform.translate(
+            offset: Offset(0, 10 * _controller.value),
+            child: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: Lottie.asset(
+                'assets/animations/mascot.json',
+                width: mascotSize,
+                height: mascotSize,
+                fit: BoxFit.contain,
+                repeat: true,
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 } 

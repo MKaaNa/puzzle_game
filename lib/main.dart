@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'core/theme/app_theme.dart';
 import 'features/game/screens/game_screen.dart';
 import 'features/auth/screens/main_menu_screen.dart';
@@ -10,8 +12,6 @@ import 'features/settings/providers/settings_provider.dart';
 import 'features/game/models/game_state.dart';
 import 'features/game/widgets/puzzle_grid.dart';
 import 'features/game/providers/game_provider.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'core/l10n/app_localizations.dart';
 import 'core/providers/locale_provider.dart';
 
 void main() async {
@@ -130,6 +130,7 @@ class PuzzleGameScreen extends ConsumerWidget {
                     : PuzzleGrid(
                         puzzle: gameState.puzzle,
                         onTileTap: (row, col) => ref.read(gameProvider.notifier).moveTile(row, col),
+                        correctPositions: gameState.correctPositions,
                       ),
               ),
             ),

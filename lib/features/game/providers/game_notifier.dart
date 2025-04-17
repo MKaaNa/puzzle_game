@@ -4,6 +4,7 @@ import 'package:puzzle_game/features/game/services/puzzle_generator.dart';
 import 'package:puzzle_game/features/game/services/daily_challenge_service.dart';
 import 'package:puzzle_game/features/game/services/achievement_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:math';
 
 final gameNotifierProvider = StateNotifierProvider<GameNotifier, GameState>((ref) {
   return GameNotifier();
@@ -105,12 +106,14 @@ class GameNotifier extends StateNotifier<GameState> {
   }
   
   int _calculateScore() {
-    final baseScore = 1000;
-    final movePenalty = state.moves * 10;
-    final timePenalty = state.time ~/ 10;
-    final hintPenalty = (state.hintCount - state.hintCount) * 50;
+    if (!state.isComplete) return 0;
+
+    final baseScore = state.difficulty.baseScore;
+    final timeBonus = max(0, state.difficulty.timeLimit - state.timeElapsed) * 10;
+    final moveBonus = max(0, state.difficulty.moveLimit - state.moves) * 5;
+    final hintPenalty = (state.difficulty.initialHints - state.hintsRemaining) * 100;
     
-    return (baseScore - movePenalty - timePenalty - hintPenalty).clamp(0, 1000);
+    return max(0, baseScore + timeBonus + moveBonus - hintPenalty);
   }
   
   (int, int) _findEmptyPosition() {

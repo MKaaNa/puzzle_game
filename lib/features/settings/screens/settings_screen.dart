@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/theme/app_theme.dart';
-import '../../../core/l10n/app_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../providers/settings_provider.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../features/game/models/game_state.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -10,9 +10,9 @@ class SettingsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context);
-    final settings = ref.watch(settingsProvider);
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final settings = ref.watch(settingsProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -120,8 +120,8 @@ class SettingsScreen extends ConsumerWidget {
         return 'Zamana Karşı';
       case GameMode.limitedMoves:
         return 'Sınırlı Hamle';
-      case GameMode.dailyChallenge:
-        return 'Günlük Mücadele';
+      case GameMode.zen:
+        return 'Zen Modu';
     }
   }
 

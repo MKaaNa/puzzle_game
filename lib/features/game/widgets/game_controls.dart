@@ -1,35 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/game_provider.dart';
 import '../models/game_state.dart';
 
-class GameControls extends StatelessWidget {
-  final GameState gameState;
-  final VoidCallback onNewGame;
-  final VoidCallback onUndo;
-
-  const GameControls({
-    super.key,
-    required this.gameState,
-    required this.onNewGame,
-    required this.onUndo,
-  });
+class GameControls extends ConsumerWidget {
+  const GameControls({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          ElevatedButton(
-            onPressed: onNewGame,
-            child: const Text('New Game'),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final gameState = ref.watch(gameProvider);
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        // Hint Button
+        Tooltip(
+          message: 'İpucu Kullan (${gameState.hintsRemaining} kaldı)',
+          child: ElevatedButton.icon(
+            onPressed: gameState.canUseHint
+                ? () => ref.read(gameProvider.notifier).useHint()
+                : null,
+            icon: const Icon(Icons.lightbulb_outline),
+            label: Text('İpucu (${gameState.hintsRemaining})'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.amber,
+              foregroundColor: Colors.black87,
+              disabledBackgroundColor: Colors.amber.withOpacity(0.3),
+            ),
           ),
-          ElevatedButton(
-            onPressed: gameState.canUndo ? onUndo : null,
-            child: const Text('Undo'),
+        ),
+
+        // Undo Button
+        Tooltip(
+          message: 'Son Hamleyi Geri Al',
+          child: ElevatedButton.icon(
+            onPressed: gameState.canUndo
+                ? () => ref.read(gameProvider.notifier).undo()
+                : null,
+            icon: const Icon(Icons.undo),
+            label: const Text('Geri Al'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              foregroundColor: Colors.white,
+              disabledBackgroundColor: Colors.blue.withOpacity(0.3),
+            ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 } 

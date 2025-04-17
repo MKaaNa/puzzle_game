@@ -11,26 +11,55 @@ class GameStats extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Text(
-            'Moves: ${gameState.moves}',
-            style: Theme.of(context).textTheme.titleLarge,
+          _buildStat(
+            'Skor',
+            gameState.score.toString(),
+            Icons.stars,
+            Colors.amber,
           ),
-          const SizedBox(height: 8),
-          Text(
-            'Status: ${gameState.status.name}',
-            style: Theme.of(context).textTheme.titleLarge,
+          _buildStat(
+            'Süre',
+            gameState.formattedTime,
+            Icons.timer,
+            Colors.blue,
           ),
-          const SizedBox(height: 8),
-          Text(
-            'Time: ${gameState.formattedTime}',
-            style: Theme.of(context).textTheme.titleLarge,
+          _buildStat(
+            'Hamle',
+            gameState.moves.toString(),
+            Icons.swap_horiz,
+            Colors.green,
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildStat(String label, String value, IconData icon, Color color) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, color: color),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          label,
+          style: TextStyle(
+            color: Colors.grey[600],
+            fontSize: 12,
+          ),
+        ),
+      ],
     );
   }
 } 

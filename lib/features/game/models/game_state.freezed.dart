@@ -20,16 +20,28 @@ GameState _$GameStateFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$GameState {
-  GameStatus get status => throw _privateConstructorUsedError;
+  String get id => throw _privateConstructorUsedError;
   List<List<int>> get puzzle => throw _privateConstructorUsedError;
   int get moves => throw _privateConstructorUsedError;
-  int get score => throw _privateConstructorUsedError;
-  int get time => throw _privateConstructorUsedError;
-  List<bool> get correctPositions => throw _privateConstructorUsedError;
-  GameDifficulty get difficulty => throw _privateConstructorUsedError;
+  int get timeElapsed => throw _privateConstructorUsedError;
+  int get timeLimit => throw _privateConstructorUsedError;
+  int get moveLimit => throw _privateConstructorUsedError;
+  int get hintsRemaining => throw _privateConstructorUsedError;
+  bool get isPaused => throw _privateConstructorUsedError;
+  bool get isComplete => throw _privateConstructorUsedError;
+  bool get hasWon => throw _privateConstructorUsedError;
+  GameStatus get status => throw _privateConstructorUsedError;
   GameMode get mode => throw _privateConstructorUsedError;
-  bool get canUndo => throw _privateConstructorUsedError;
-  bool get isGameOver => throw _privateConstructorUsedError;
+  GameDifficulty get difficulty => throw _privateConstructorUsedError;
+  List<bool> get correctPositions => throw _privateConstructorUsedError;
+  List<List<int>> get previousMoves => throw _privateConstructorUsedError;
+  int get score => throw _privateConstructorUsedError;
+  int get bestScore => throw _privateConstructorUsedError;
+  int get bestTime => throw _privateConstructorUsedError;
+  int get gamesPlayed => throw _privateConstructorUsedError;
+  int get gamesWon => throw _privateConstructorUsedError;
+  int get currentStreak => throw _privateConstructorUsedError;
+  int get bestStreak => throw _privateConstructorUsedError;
 
   /// Serializes this GameState to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -47,16 +59,28 @@ abstract class $GameStateCopyWith<$Res> {
       _$GameStateCopyWithImpl<$Res, GameState>;
   @useResult
   $Res call(
-      {GameStatus status,
+      {String id,
       List<List<int>> puzzle,
       int moves,
-      int score,
-      int time,
-      List<bool> correctPositions,
-      GameDifficulty difficulty,
+      int timeElapsed,
+      int timeLimit,
+      int moveLimit,
+      int hintsRemaining,
+      bool isPaused,
+      bool isComplete,
+      bool hasWon,
+      GameStatus status,
       GameMode mode,
-      bool canUndo,
-      bool isGameOver});
+      GameDifficulty difficulty,
+      List<bool> correctPositions,
+      List<List<int>> previousMoves,
+      int score,
+      int bestScore,
+      int bestTime,
+      int gamesPlayed,
+      int gamesWon,
+      int currentStreak,
+      int bestStreak});
 }
 
 /// @nodoc
@@ -74,22 +98,34 @@ class _$GameStateCopyWithImpl<$Res, $Val extends GameState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? status = null,
+    Object? id = null,
     Object? puzzle = null,
     Object? moves = null,
-    Object? score = null,
-    Object? time = null,
-    Object? correctPositions = null,
-    Object? difficulty = null,
+    Object? timeElapsed = null,
+    Object? timeLimit = null,
+    Object? moveLimit = null,
+    Object? hintsRemaining = null,
+    Object? isPaused = null,
+    Object? isComplete = null,
+    Object? hasWon = null,
+    Object? status = null,
     Object? mode = null,
-    Object? canUndo = null,
-    Object? isGameOver = null,
+    Object? difficulty = null,
+    Object? correctPositions = null,
+    Object? previousMoves = null,
+    Object? score = null,
+    Object? bestScore = null,
+    Object? bestTime = null,
+    Object? gamesPlayed = null,
+    Object? gamesWon = null,
+    Object? currentStreak = null,
+    Object? bestStreak = null,
   }) {
     return _then(_value.copyWith(
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as GameStatus,
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
       puzzle: null == puzzle
           ? _value.puzzle
           : puzzle // ignore: cast_nullable_to_non_nullable
@@ -98,34 +134,82 @@ class _$GameStateCopyWithImpl<$Res, $Val extends GameState>
           ? _value.moves
           : moves // ignore: cast_nullable_to_non_nullable
               as int,
-      score: null == score
-          ? _value.score
-          : score // ignore: cast_nullable_to_non_nullable
+      timeElapsed: null == timeElapsed
+          ? _value.timeElapsed
+          : timeElapsed // ignore: cast_nullable_to_non_nullable
               as int,
-      time: null == time
-          ? _value.time
-          : time // ignore: cast_nullable_to_non_nullable
+      timeLimit: null == timeLimit
+          ? _value.timeLimit
+          : timeLimit // ignore: cast_nullable_to_non_nullable
               as int,
-      correctPositions: null == correctPositions
-          ? _value.correctPositions
-          : correctPositions // ignore: cast_nullable_to_non_nullable
-              as List<bool>,
-      difficulty: null == difficulty
-          ? _value.difficulty
-          : difficulty // ignore: cast_nullable_to_non_nullable
-              as GameDifficulty,
+      moveLimit: null == moveLimit
+          ? _value.moveLimit
+          : moveLimit // ignore: cast_nullable_to_non_nullable
+              as int,
+      hintsRemaining: null == hintsRemaining
+          ? _value.hintsRemaining
+          : hintsRemaining // ignore: cast_nullable_to_non_nullable
+              as int,
+      isPaused: null == isPaused
+          ? _value.isPaused
+          : isPaused // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isComplete: null == isComplete
+          ? _value.isComplete
+          : isComplete // ignore: cast_nullable_to_non_nullable
+              as bool,
+      hasWon: null == hasWon
+          ? _value.hasWon
+          : hasWon // ignore: cast_nullable_to_non_nullable
+              as bool,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as GameStatus,
       mode: null == mode
           ? _value.mode
           : mode // ignore: cast_nullable_to_non_nullable
               as GameMode,
-      canUndo: null == canUndo
-          ? _value.canUndo
-          : canUndo // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isGameOver: null == isGameOver
-          ? _value.isGameOver
-          : isGameOver // ignore: cast_nullable_to_non_nullable
-              as bool,
+      difficulty: null == difficulty
+          ? _value.difficulty
+          : difficulty // ignore: cast_nullable_to_non_nullable
+              as GameDifficulty,
+      correctPositions: null == correctPositions
+          ? _value.correctPositions
+          : correctPositions // ignore: cast_nullable_to_non_nullable
+              as List<bool>,
+      previousMoves: null == previousMoves
+          ? _value.previousMoves
+          : previousMoves // ignore: cast_nullable_to_non_nullable
+              as List<List<int>>,
+      score: null == score
+          ? _value.score
+          : score // ignore: cast_nullable_to_non_nullable
+              as int,
+      bestScore: null == bestScore
+          ? _value.bestScore
+          : bestScore // ignore: cast_nullable_to_non_nullable
+              as int,
+      bestTime: null == bestTime
+          ? _value.bestTime
+          : bestTime // ignore: cast_nullable_to_non_nullable
+              as int,
+      gamesPlayed: null == gamesPlayed
+          ? _value.gamesPlayed
+          : gamesPlayed // ignore: cast_nullable_to_non_nullable
+              as int,
+      gamesWon: null == gamesWon
+          ? _value.gamesWon
+          : gamesWon // ignore: cast_nullable_to_non_nullable
+              as int,
+      currentStreak: null == currentStreak
+          ? _value.currentStreak
+          : currentStreak // ignore: cast_nullable_to_non_nullable
+              as int,
+      bestStreak: null == bestStreak
+          ? _value.bestStreak
+          : bestStreak // ignore: cast_nullable_to_non_nullable
+              as int,
     ) as $Val);
   }
 }
@@ -139,16 +223,28 @@ abstract class _$$GameStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {GameStatus status,
+      {String id,
       List<List<int>> puzzle,
       int moves,
-      int score,
-      int time,
-      List<bool> correctPositions,
-      GameDifficulty difficulty,
+      int timeElapsed,
+      int timeLimit,
+      int moveLimit,
+      int hintsRemaining,
+      bool isPaused,
+      bool isComplete,
+      bool hasWon,
+      GameStatus status,
       GameMode mode,
-      bool canUndo,
-      bool isGameOver});
+      GameDifficulty difficulty,
+      List<bool> correctPositions,
+      List<List<int>> previousMoves,
+      int score,
+      int bestScore,
+      int bestTime,
+      int gamesPlayed,
+      int gamesWon,
+      int currentStreak,
+      int bestStreak});
 }
 
 /// @nodoc
@@ -164,22 +260,34 @@ class __$$GameStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? status = null,
+    Object? id = null,
     Object? puzzle = null,
     Object? moves = null,
-    Object? score = null,
-    Object? time = null,
-    Object? correctPositions = null,
-    Object? difficulty = null,
+    Object? timeElapsed = null,
+    Object? timeLimit = null,
+    Object? moveLimit = null,
+    Object? hintsRemaining = null,
+    Object? isPaused = null,
+    Object? isComplete = null,
+    Object? hasWon = null,
+    Object? status = null,
     Object? mode = null,
-    Object? canUndo = null,
-    Object? isGameOver = null,
+    Object? difficulty = null,
+    Object? correctPositions = null,
+    Object? previousMoves = null,
+    Object? score = null,
+    Object? bestScore = null,
+    Object? bestTime = null,
+    Object? gamesPlayed = null,
+    Object? gamesWon = null,
+    Object? currentStreak = null,
+    Object? bestStreak = null,
   }) {
     return _then(_$GameStateImpl(
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as GameStatus,
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
       puzzle: null == puzzle
           ? _value._puzzle
           : puzzle // ignore: cast_nullable_to_non_nullable
@@ -188,64 +296,123 @@ class __$$GameStateImplCopyWithImpl<$Res>
           ? _value.moves
           : moves // ignore: cast_nullable_to_non_nullable
               as int,
-      score: null == score
-          ? _value.score
-          : score // ignore: cast_nullable_to_non_nullable
+      timeElapsed: null == timeElapsed
+          ? _value.timeElapsed
+          : timeElapsed // ignore: cast_nullable_to_non_nullable
               as int,
-      time: null == time
-          ? _value.time
-          : time // ignore: cast_nullable_to_non_nullable
+      timeLimit: null == timeLimit
+          ? _value.timeLimit
+          : timeLimit // ignore: cast_nullable_to_non_nullable
               as int,
-      correctPositions: null == correctPositions
-          ? _value._correctPositions
-          : correctPositions // ignore: cast_nullable_to_non_nullable
-              as List<bool>,
-      difficulty: null == difficulty
-          ? _value.difficulty
-          : difficulty // ignore: cast_nullable_to_non_nullable
-              as GameDifficulty,
+      moveLimit: null == moveLimit
+          ? _value.moveLimit
+          : moveLimit // ignore: cast_nullable_to_non_nullable
+              as int,
+      hintsRemaining: null == hintsRemaining
+          ? _value.hintsRemaining
+          : hintsRemaining // ignore: cast_nullable_to_non_nullable
+              as int,
+      isPaused: null == isPaused
+          ? _value.isPaused
+          : isPaused // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isComplete: null == isComplete
+          ? _value.isComplete
+          : isComplete // ignore: cast_nullable_to_non_nullable
+              as bool,
+      hasWon: null == hasWon
+          ? _value.hasWon
+          : hasWon // ignore: cast_nullable_to_non_nullable
+              as bool,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as GameStatus,
       mode: null == mode
           ? _value.mode
           : mode // ignore: cast_nullable_to_non_nullable
               as GameMode,
-      canUndo: null == canUndo
-          ? _value.canUndo
-          : canUndo // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isGameOver: null == isGameOver
-          ? _value.isGameOver
-          : isGameOver // ignore: cast_nullable_to_non_nullable
-              as bool,
+      difficulty: null == difficulty
+          ? _value.difficulty
+          : difficulty // ignore: cast_nullable_to_non_nullable
+              as GameDifficulty,
+      correctPositions: null == correctPositions
+          ? _value._correctPositions
+          : correctPositions // ignore: cast_nullable_to_non_nullable
+              as List<bool>,
+      previousMoves: null == previousMoves
+          ? _value._previousMoves
+          : previousMoves // ignore: cast_nullable_to_non_nullable
+              as List<List<int>>,
+      score: null == score
+          ? _value.score
+          : score // ignore: cast_nullable_to_non_nullable
+              as int,
+      bestScore: null == bestScore
+          ? _value.bestScore
+          : bestScore // ignore: cast_nullable_to_non_nullable
+              as int,
+      bestTime: null == bestTime
+          ? _value.bestTime
+          : bestTime // ignore: cast_nullable_to_non_nullable
+              as int,
+      gamesPlayed: null == gamesPlayed
+          ? _value.gamesPlayed
+          : gamesPlayed // ignore: cast_nullable_to_non_nullable
+              as int,
+      gamesWon: null == gamesWon
+          ? _value.gamesWon
+          : gamesWon // ignore: cast_nullable_to_non_nullable
+              as int,
+      currentStreak: null == currentStreak
+          ? _value.currentStreak
+          : currentStreak // ignore: cast_nullable_to_non_nullable
+              as int,
+      bestStreak: null == bestStreak
+          ? _value.bestStreak
+          : bestStreak // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$GameStateImpl implements _GameState {
+class _$GameStateImpl with DiagnosticableTreeMixin implements _GameState {
   const _$GameStateImpl(
-      {this.status = GameStatus.initial,
-      final List<List<int>> puzzle = const [],
-      this.moves = 0,
+      {required this.id,
+      required final List<List<int>> puzzle,
+      required this.moves,
+      required this.timeElapsed,
+      required this.timeLimit,
+      required this.moveLimit,
+      required this.hintsRemaining,
+      required this.isPaused,
+      required this.isComplete,
+      required this.hasWon,
+      required this.status,
+      required this.mode,
+      required this.difficulty,
+      required final List<bool> correctPositions,
+      required final List<List<int>> previousMoves,
       this.score = 0,
-      this.time = 0,
-      final List<bool> correctPositions = const [],
-      this.difficulty = GameDifficulty.medium,
-      this.mode = GameMode.classic,
-      this.canUndo = false,
-      this.isGameOver = false})
+      this.bestScore = 0,
+      this.bestTime = 0,
+      this.gamesPlayed = 0,
+      this.gamesWon = 0,
+      this.currentStreak = 0,
+      this.bestStreak = 0})
       : _puzzle = puzzle,
-        _correctPositions = correctPositions;
+        _correctPositions = correctPositions,
+        _previousMoves = previousMoves;
 
   factory _$GameStateImpl.fromJson(Map<String, dynamic> json) =>
       _$$GameStateImplFromJson(json);
 
   @override
-  @JsonKey()
-  final GameStatus status;
+  final String id;
   final List<List<int>> _puzzle;
   @override
-  @JsonKey()
   List<List<int>> get puzzle {
     if (_puzzle is EqualUnmodifiableListView) return _puzzle;
     // ignore: implicit_dynamic_type
@@ -253,17 +420,29 @@ class _$GameStateImpl implements _GameState {
   }
 
   @override
-  @JsonKey()
   final int moves;
   @override
-  @JsonKey()
-  final int score;
+  final int timeElapsed;
   @override
-  @JsonKey()
-  final int time;
+  final int timeLimit;
+  @override
+  final int moveLimit;
+  @override
+  final int hintsRemaining;
+  @override
+  final bool isPaused;
+  @override
+  final bool isComplete;
+  @override
+  final bool hasWon;
+  @override
+  final GameStatus status;
+  @override
+  final GameMode mode;
+  @override
+  final GameDifficulty difficulty;
   final List<bool> _correctPositions;
   @override
-  @JsonKey()
   List<bool> get correctPositions {
     if (_correctPositions is EqualUnmodifiableListView)
       return _correctPositions;
@@ -271,22 +450,68 @@ class _$GameStateImpl implements _GameState {
     return EqualUnmodifiableListView(_correctPositions);
   }
 
+  final List<List<int>> _previousMoves;
   @override
-  @JsonKey()
-  final GameDifficulty difficulty;
-  @override
-  @JsonKey()
-  final GameMode mode;
-  @override
-  @JsonKey()
-  final bool canUndo;
-  @override
-  @JsonKey()
-  final bool isGameOver;
+  List<List<int>> get previousMoves {
+    if (_previousMoves is EqualUnmodifiableListView) return _previousMoves;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_previousMoves);
+  }
 
   @override
-  String toString() {
-    return 'GameState(status: $status, puzzle: $puzzle, moves: $moves, score: $score, time: $time, correctPositions: $correctPositions, difficulty: $difficulty, mode: $mode, canUndo: $canUndo, isGameOver: $isGameOver)';
+  @JsonKey()
+  final int score;
+  @override
+  @JsonKey()
+  final int bestScore;
+  @override
+  @JsonKey()
+  final int bestTime;
+  @override
+  @JsonKey()
+  final int gamesPlayed;
+  @override
+  @JsonKey()
+  final int gamesWon;
+  @override
+  @JsonKey()
+  final int currentStreak;
+  @override
+  @JsonKey()
+  final int bestStreak;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'GameState(id: $id, puzzle: $puzzle, moves: $moves, timeElapsed: $timeElapsed, timeLimit: $timeLimit, moveLimit: $moveLimit, hintsRemaining: $hintsRemaining, isPaused: $isPaused, isComplete: $isComplete, hasWon: $hasWon, status: $status, mode: $mode, difficulty: $difficulty, correctPositions: $correctPositions, previousMoves: $previousMoves, score: $score, bestScore: $bestScore, bestTime: $bestTime, gamesPlayed: $gamesPlayed, gamesWon: $gamesWon, currentStreak: $currentStreak, bestStreak: $bestStreak)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'GameState'))
+      ..add(DiagnosticsProperty('id', id))
+      ..add(DiagnosticsProperty('puzzle', puzzle))
+      ..add(DiagnosticsProperty('moves', moves))
+      ..add(DiagnosticsProperty('timeElapsed', timeElapsed))
+      ..add(DiagnosticsProperty('timeLimit', timeLimit))
+      ..add(DiagnosticsProperty('moveLimit', moveLimit))
+      ..add(DiagnosticsProperty('hintsRemaining', hintsRemaining))
+      ..add(DiagnosticsProperty('isPaused', isPaused))
+      ..add(DiagnosticsProperty('isComplete', isComplete))
+      ..add(DiagnosticsProperty('hasWon', hasWon))
+      ..add(DiagnosticsProperty('status', status))
+      ..add(DiagnosticsProperty('mode', mode))
+      ..add(DiagnosticsProperty('difficulty', difficulty))
+      ..add(DiagnosticsProperty('correctPositions', correctPositions))
+      ..add(DiagnosticsProperty('previousMoves', previousMoves))
+      ..add(DiagnosticsProperty('score', score))
+      ..add(DiagnosticsProperty('bestScore', bestScore))
+      ..add(DiagnosticsProperty('bestTime', bestTime))
+      ..add(DiagnosticsProperty('gamesPlayed', gamesPlayed))
+      ..add(DiagnosticsProperty('gamesWon', gamesWon))
+      ..add(DiagnosticsProperty('currentStreak', currentStreak))
+      ..add(DiagnosticsProperty('bestStreak', bestStreak));
   }
 
   @override
@@ -294,35 +519,72 @@ class _$GameStateImpl implements _GameState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$GameStateImpl &&
-            (identical(other.status, status) || other.status == status) &&
+            (identical(other.id, id) || other.id == id) &&
             const DeepCollectionEquality().equals(other._puzzle, _puzzle) &&
             (identical(other.moves, moves) || other.moves == moves) &&
-            (identical(other.score, score) || other.score == score) &&
-            (identical(other.time, time) || other.time == time) &&
-            const DeepCollectionEquality()
-                .equals(other._correctPositions, _correctPositions) &&
+            (identical(other.timeElapsed, timeElapsed) ||
+                other.timeElapsed == timeElapsed) &&
+            (identical(other.timeLimit, timeLimit) ||
+                other.timeLimit == timeLimit) &&
+            (identical(other.moveLimit, moveLimit) ||
+                other.moveLimit == moveLimit) &&
+            (identical(other.hintsRemaining, hintsRemaining) ||
+                other.hintsRemaining == hintsRemaining) &&
+            (identical(other.isPaused, isPaused) ||
+                other.isPaused == isPaused) &&
+            (identical(other.isComplete, isComplete) ||
+                other.isComplete == isComplete) &&
+            (identical(other.hasWon, hasWon) || other.hasWon == hasWon) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.mode, mode) || other.mode == mode) &&
             (identical(other.difficulty, difficulty) ||
                 other.difficulty == difficulty) &&
-            (identical(other.mode, mode) || other.mode == mode) &&
-            (identical(other.canUndo, canUndo) || other.canUndo == canUndo) &&
-            (identical(other.isGameOver, isGameOver) ||
-                other.isGameOver == isGameOver));
+            const DeepCollectionEquality()
+                .equals(other._correctPositions, _correctPositions) &&
+            const DeepCollectionEquality()
+                .equals(other._previousMoves, _previousMoves) &&
+            (identical(other.score, score) || other.score == score) &&
+            (identical(other.bestScore, bestScore) ||
+                other.bestScore == bestScore) &&
+            (identical(other.bestTime, bestTime) ||
+                other.bestTime == bestTime) &&
+            (identical(other.gamesPlayed, gamesPlayed) ||
+                other.gamesPlayed == gamesPlayed) &&
+            (identical(other.gamesWon, gamesWon) ||
+                other.gamesWon == gamesWon) &&
+            (identical(other.currentStreak, currentStreak) ||
+                other.currentStreak == currentStreak) &&
+            (identical(other.bestStreak, bestStreak) ||
+                other.bestStreak == bestStreak));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      status,
-      const DeepCollectionEquality().hash(_puzzle),
-      moves,
-      score,
-      time,
-      const DeepCollectionEquality().hash(_correctPositions),
-      difficulty,
-      mode,
-      canUndo,
-      isGameOver);
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        id,
+        const DeepCollectionEquality().hash(_puzzle),
+        moves,
+        timeElapsed,
+        timeLimit,
+        moveLimit,
+        hintsRemaining,
+        isPaused,
+        isComplete,
+        hasWon,
+        status,
+        mode,
+        difficulty,
+        const DeepCollectionEquality().hash(_correctPositions),
+        const DeepCollectionEquality().hash(_previousMoves),
+        score,
+        bestScore,
+        bestTime,
+        gamesPlayed,
+        gamesWon,
+        currentStreak,
+        bestStreak
+      ]);
 
   /// Create a copy of GameState
   /// with the given fields replaced by the non-null parameter values.
@@ -342,40 +604,76 @@ class _$GameStateImpl implements _GameState {
 
 abstract class _GameState implements GameState {
   const factory _GameState(
-      {final GameStatus status,
-      final List<List<int>> puzzle,
-      final int moves,
+      {required final String id,
+      required final List<List<int>> puzzle,
+      required final int moves,
+      required final int timeElapsed,
+      required final int timeLimit,
+      required final int moveLimit,
+      required final int hintsRemaining,
+      required final bool isPaused,
+      required final bool isComplete,
+      required final bool hasWon,
+      required final GameStatus status,
+      required final GameMode mode,
+      required final GameDifficulty difficulty,
+      required final List<bool> correctPositions,
+      required final List<List<int>> previousMoves,
       final int score,
-      final int time,
-      final List<bool> correctPositions,
-      final GameDifficulty difficulty,
-      final GameMode mode,
-      final bool canUndo,
-      final bool isGameOver}) = _$GameStateImpl;
+      final int bestScore,
+      final int bestTime,
+      final int gamesPlayed,
+      final int gamesWon,
+      final int currentStreak,
+      final int bestStreak}) = _$GameStateImpl;
 
   factory _GameState.fromJson(Map<String, dynamic> json) =
       _$GameStateImpl.fromJson;
 
   @override
-  GameStatus get status;
+  String get id;
   @override
   List<List<int>> get puzzle;
   @override
   int get moves;
   @override
-  int get score;
+  int get timeElapsed;
   @override
-  int get time;
+  int get timeLimit;
   @override
-  List<bool> get correctPositions;
+  int get moveLimit;
   @override
-  GameDifficulty get difficulty;
+  int get hintsRemaining;
+  @override
+  bool get isPaused;
+  @override
+  bool get isComplete;
+  @override
+  bool get hasWon;
+  @override
+  GameStatus get status;
   @override
   GameMode get mode;
   @override
-  bool get canUndo;
+  GameDifficulty get difficulty;
   @override
-  bool get isGameOver;
+  List<bool> get correctPositions;
+  @override
+  List<List<int>> get previousMoves;
+  @override
+  int get score;
+  @override
+  int get bestScore;
+  @override
+  int get bestTime;
+  @override
+  int get gamesPlayed;
+  @override
+  int get gamesWon;
+  @override
+  int get currentStreak;
+  @override
+  int get bestStreak;
 
   /// Create a copy of GameState
   /// with the given fields replaced by the non-null parameter values.
