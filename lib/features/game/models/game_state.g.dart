@@ -8,70 +8,69 @@ part of 'game_state.dart';
 
 _$GameStateImpl _$$GameStateImplFromJson(Map<String, dynamic> json) =>
     _$GameStateImpl(
-      id: json['id'] as String,
-      puzzle: (json['puzzle'] as List<dynamic>)
-          .map((e) =>
-              (e as List<dynamic>).map((e) => (e as num).toInt()).toList())
+      tiles: (json['tiles'] as List<dynamic>)
+          .map((e) => (e as num).toInt())
           .toList(),
-      moves: (json['moves'] as num).toInt(),
-      timeElapsed: (json['timeElapsed'] as num).toInt(),
-      timeLimit: (json['timeLimit'] as num).toInt(),
-      moveLimit: (json['moveLimit'] as num).toInt(),
-      hintsRemaining: (json['hintsRemaining'] as num).toInt(),
-      isPaused: json['isPaused'] as bool,
+      emptyTileIndex: (json['emptyTileIndex'] as num).toInt(),
       isComplete: json['isComplete'] as bool,
-      hasWon: json['hasWon'] as bool,
-      status: $enumDecode(_$GameStatusEnumMap, json['status']),
-      mode: $enumDecode(_$GameModeEnumMap, json['mode']),
+      moveCount: (json['moveCount'] as num).toInt(),
+      elapsedTime: Duration(microseconds: (json['elapsedTime'] as num).toInt()),
+      isActive: json['isActive'] as bool,
+      score: (json['score'] as num).toInt(),
       difficulty: $enumDecode(_$GameDifficultyEnumMap, json['difficulty']),
-      correctPositions: (json['correctPositions'] as List<dynamic>)
-          .map((e) => e as bool)
-          .toList(),
-      previousMoves: (json['previousMoves'] as List<dynamic>)
-          .map((e) =>
-              (e as List<dynamic>).map((e) => (e as num).toInt()).toList())
-          .toList(),
-      score: (json['score'] as num?)?.toInt() ?? 0,
+      mode: $enumDecode(_$GameModeEnumMap, json['mode']),
+      status: $enumDecode(_$GameStatusEnumMap, json['status']),
+      isShowingHint: json['isShowingHint'] as bool? ?? false,
+      hintTileIndex: (json['hintTileIndex'] as num?)?.toInt(),
       bestScore: (json['bestScore'] as num?)?.toInt() ?? 0,
-      bestTime: (json['bestTime'] as num?)?.toInt() ?? 0,
-      gamesPlayed: (json['gamesPlayed'] as num?)?.toInt() ?? 0,
+      bestTime: json['bestTime'] == null
+          ? Duration.zero
+          : Duration(microseconds: (json['bestTime'] as num).toInt()),
       gamesWon: (json['gamesWon'] as num?)?.toInt() ?? 0,
+      gamesPlayed: (json['gamesPlayed'] as num?)?.toInt() ?? 0,
       currentStreak: (json['currentStreak'] as num?)?.toInt() ?? 0,
       bestStreak: (json['bestStreak'] as num?)?.toInt() ?? 0,
+      hintsRemaining: (json['hintsRemaining'] as num?)?.toInt() ?? 3,
+      correctPositions: (json['correctPositions'] as List<dynamic>?)
+              ?.map((e) => (e as List<dynamic>).map((e) => e as bool).toList())
+              .toList() ??
+          const [],
+      previousMoves: (json['previousMoves'] as List<dynamic>?)
+              ?.map((e) =>
+                  (e as List<dynamic>).map((e) => (e as num).toInt()).toList())
+              .toList() ??
+          const [],
     );
 
 Map<String, dynamic> _$$GameStateImplToJson(_$GameStateImpl instance) =>
     <String, dynamic>{
-      'id': instance.id,
-      'puzzle': instance.puzzle,
-      'moves': instance.moves,
-      'timeElapsed': instance.timeElapsed,
-      'timeLimit': instance.timeLimit,
-      'moveLimit': instance.moveLimit,
-      'hintsRemaining': instance.hintsRemaining,
-      'isPaused': instance.isPaused,
+      'tiles': instance.tiles,
+      'emptyTileIndex': instance.emptyTileIndex,
       'isComplete': instance.isComplete,
-      'hasWon': instance.hasWon,
-      'status': _$GameStatusEnumMap[instance.status]!,
-      'mode': _$GameModeEnumMap[instance.mode]!,
-      'difficulty': _$GameDifficultyEnumMap[instance.difficulty]!,
-      'correctPositions': instance.correctPositions,
-      'previousMoves': instance.previousMoves,
+      'moveCount': instance.moveCount,
+      'elapsedTime': instance.elapsedTime.inMicroseconds,
+      'isActive': instance.isActive,
       'score': instance.score,
+      'difficulty': _$GameDifficultyEnumMap[instance.difficulty]!,
+      'mode': _$GameModeEnumMap[instance.mode]!,
+      'status': _$GameStatusEnumMap[instance.status]!,
+      'isShowingHint': instance.isShowingHint,
+      'hintTileIndex': instance.hintTileIndex,
       'bestScore': instance.bestScore,
-      'bestTime': instance.bestTime,
-      'gamesPlayed': instance.gamesPlayed,
+      'bestTime': instance.bestTime.inMicroseconds,
       'gamesWon': instance.gamesWon,
+      'gamesPlayed': instance.gamesPlayed,
       'currentStreak': instance.currentStreak,
       'bestStreak': instance.bestStreak,
+      'hintsRemaining': instance.hintsRemaining,
+      'correctPositions': instance.correctPositions,
+      'previousMoves': instance.previousMoves,
     };
 
-const _$GameStatusEnumMap = {
-  GameStatus.initial: 'initial',
-  GameStatus.inProgress: 'inProgress',
-  GameStatus.paused: 'paused',
-  GameStatus.completed: 'completed',
-  GameStatus.gameOver: 'gameOver',
+const _$GameDifficultyEnumMap = {
+  GameDifficulty.easy: 'easy',
+  GameDifficulty.medium: 'medium',
+  GameDifficulty.hard: 'hard',
 };
 
 const _$GameModeEnumMap = {
@@ -81,8 +80,10 @@ const _$GameModeEnumMap = {
   GameMode.zen: 'zen',
 };
 
-const _$GameDifficultyEnumMap = {
-  GameDifficulty.easy: 'easy',
-  GameDifficulty.medium: 'medium',
-  GameDifficulty.hard: 'hard',
+const _$GameStatusEnumMap = {
+  GameStatus.initial: 'initial',
+  GameStatus.inProgress: 'inProgress',
+  GameStatus.paused: 'paused',
+  GameStatus.completed: 'completed',
+  GameStatus.gameOver: 'gameOver',
 };

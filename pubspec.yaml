@@ -99,6 +99,9 @@ flutter:
     - assets/icons/
     - assets/fonts/
     - assets/translations/
+    - assets/images/mascot/mascot.png
+    - assets/images/mascot/mascott.png
+    - assets/images/mascot/maskotit.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

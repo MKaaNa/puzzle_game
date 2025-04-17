@@ -2,261 +2,221 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/game_state.dart';
-import '../services/puzzle_generator.dart';
+import '../models/game_difficulty.dart';
 import 'package:uuid/uuid.dart';
 
-final gameProvider = StateNotifierProvider<GameNotifier, GameState>((ref) {
-  return GameNotifier();
+final gameProvider = StateNotifierProvider<GameProvider, GameState>((ref) {
+  return GameProvider(GameDifficulty.medium);
 });
 
-class GameNotifier extends StateNotifier<GameState> {
+class GameProvider extends StateNotifier<GameState> {
   Timer? _timer;
-  final Random _random = Random();
+  final GameDifficulty difficulty;
 
-  GameNotifier() : super(GameState.initial(difficulty: GameDifficulty.easy));
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
+  GameProvider(this.difficulty) : super(GameState.initial(difficulty: difficulty));
 
   void startNewGame(GameDifficulty difficulty) {
-    _timer?.cancel();
-    final puzzle = PuzzleGenerator.generatePuzzle(difficulty);
-    state = GameState(
-      id: const Uuid().v4(),
-      status: GameStatus.inProgress,
-      mode: GameMode.classic,
-      puzzle: puzzle,
-      moves: 0,
-      score: 0,
-      timeElapsed: 0,
-      difficulty: difficulty,
-      correctPositions: List.filled(puzzle.length * puzzle[0].length, false),
-      hintsRemaining: difficulty.initialHints,
-      timeLimit: difficulty.timeLimit,
-      moveLimit: difficulty.moveLimit,
-      previousMoves: [],
-      isPaused: false,
-      isComplete: false,
-      hasWon: false,
+    state = GameState.initial(difficulty: difficulty);
+  }
+
+  void startGame() {
+    if (state.status == GameStatus.initial) {
+      state = state.copyWith(
+        status: GameStatus.inProgress,
+        isActive: true,
+      );
+      _startTimer();
+    }
+  }
+
+  void pauseGame() {
+    if (state.status == GameStatus.inProgress) {
+      state = state.copyWith(
+        status: GameStatus.paused,
+        isActive: false,
+      );
+      _stopTimer();
+    }
+  }
+
+  void resumeGame() {
+    if (state.status == GameStatus.paused) {
+      state = state.copyWith(
+        status: GameStatus.inProgress,
+        isActive: true,
+      );
+      _startTimer();
+    }
+  }
+
+  void moveTile(int tileIndex) {
+    if (!state.isActive || state.isComplete) return;
+    if (!_isValidMove(tileIndex)) return;
+
+    final newTiles = List<int>.from(state.tiles);
+    final emptyIndex = state.emptyTileIndex;
+
+    // Swap tiles
+    newTiles[emptyIndex] = newTiles[tileIndex];
+    newTiles[tileIndex] = 0;
+
+    state = state.copyWith(
+      tiles: newTiles,
+      emptyTileIndex: tileIndex,
+      moveCount: state.moveCount + 1,
     );
-    _startTimer();
-    _updateCorrectPositions();
+
+    if (_isPuzzleSolved()) {
+      _handleGameWin();
+    }
+  }
+
+  bool _isValidMove(int tileIndex) {
+    final emptyIndex = state.emptyTileIndex;
+    final size = sqrt(state.tiles.length).toInt();
+
+    // Check if the tile is adjacent to the empty tile
+    return (tileIndex == emptyIndex - 1 && tileIndex % size != size - 1) ||
+        (tileIndex == emptyIndex + 1 && tileIndex % size != 0) ||
+        tileIndex == emptyIndex - size ||
+        tileIndex == emptyIndex + size;
+  }
+
+  bool _isPuzzleSolved() {
+    for (int i = 0; i < state.tiles.length - 1; i++) {
+      if (state.tiles[i] != i + 1) return false;
+    }
+    return state.tiles.last == 0;
+  }
+
+  void _handleGameWin() {
+    _stopTimer();
+    state = state.copyWith(
+      status: GameStatus.completed,
+      isComplete: true,
+      isActive: false,
+      score: _calculateScore(),
+    );
+  }
+
+  int _calculateScore() {
+    final timeScore = (state.elapsedTime.inSeconds * 10).toInt();
+    final moveScore = state.moveCount * 5;
+    return 1000 - timeScore - moveScore;
   }
 
   void _startTimer() {
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (state.status == GameStatus.inProgress) {
-        if (state.isTimeTrialMode && state.timeElapsed >= state.timeLimit) {
-          _gameOver();
-          return;
-        }
-        state = state.copyWith(timeElapsed: state.timeElapsed + 1);
-      }
+      state = state.copyWith(
+        elapsedTime: state.elapsedTime + const Duration(seconds: 1),
+      );
     });
+  }
+
+  void _stopTimer() {
+    _timer?.cancel();
+    _timer = null;
   }
 
   void togglePause() {
     if (state.status == GameStatus.inProgress) {
-      state = state.copyWith(status: GameStatus.paused);
+      pauseGame();
     } else if (state.status == GameStatus.paused) {
-      state = state.copyWith(status: GameStatus.inProgress);
+      resumeGame();
     }
   }
 
-  void moveTile(int row, int col) {
-    if (state.status != GameStatus.inProgress) return;
-    if (state.isLimitedMovesMode && state.moves >= state.moveLimit) {
-      _gameOver();
-      return;
-    }
-
-    final puzzle = List<List<int>>.from(state.puzzle);
-    final emptyTile = _findEmptyTile(puzzle);
-    
-    if (_isValidMove(row, col, emptyTile)) {
-      _swapTiles(puzzle, row, col, emptyTile.$1, emptyTile.$2);
-      
-      final previousMoves = List<List<int>>.from(state.previousMoves)
-        ..add(state.puzzle.expand((row) => row).toList());
-
-      state = state.copyWith(
-        puzzle: puzzle,
-        moves: state.moves + 1,
-        previousMoves: previousMoves,
-      );
-
-      _updateCorrectPositions();
-
-      if (_isPuzzleSolved(puzzle)) {
-        _handleGameWin();
-      }
-    }
+  @override
+  void dispose() {
+    _stopTimer();
+    super.dispose();
   }
 
-  void useHint() {
-    if (!state.canUseHint) return;
+  void showHint() {
+    if (state.isShowingHint || !state.isActive || state.hintsRemaining <= 0) return;
 
-    final puzzle = state.puzzle;
-    final emptyTile = _findEmptyTile(puzzle);
-    final correctMove = _findCorrectMove(emptyTile);
-
+    final correctMove = _findCorrectMove();
     if (correctMove != null) {
       state = state.copyWith(
+        isShowingHint: true,
+        hintTileIndex: correctMove,
         hintsRemaining: state.hintsRemaining - 1,
-        score: state.score - 50, // Penalty for using hint
       );
-      moveTile(correctMove.$1, correctMove.$2);
+
+      // Hide hint after animation
+      Future.delayed(const Duration(milliseconds: 2000), () {
+        if (mounted) {
+          state = state.copyWith(
+            isShowingHint: false,
+            hintTileIndex: null,
+          );
+        }
+      });
     }
   }
 
-  void undo() {
-    if (!state.canUndo || state.previousMoves.isEmpty) return;
-
-    final previousMoves = List<List<int>>.from(state.previousMoves);
-    final lastMove = previousMoves.removeLast();
-    final puzzle = List<List<int>>.generate(
-      state.puzzle.length,
-      (i) => lastMove.sublist(i * state.puzzle.length, (i + 1) * state.puzzle.length),
-    );
-
-    state = state.copyWith(
-      puzzle: puzzle,
-      moves: state.moves - 1,
-      score: state.score - 5, // Small penalty for undoing
-      previousMoves: previousMoves,
-    );
-
-    _updateCorrectPositions();
-  }
-
-  void _updateCorrectPositions() {
-    final size = state.puzzle.length;
-    final correctPositions = List<bool>.filled(size * size, false);
-    var expectedValue = 1;
-
-    for (var i = 0; i < size; i++) {
-      for (var j = 0; j < size; j++) {
-        if (i == size - 1 && j == size - 1) {
-          correctPositions[i * size + j] = state.puzzle[i][j] == 0;
-        } else {
-          correctPositions[i * size + j] = state.puzzle[i][j] == expectedValue;
-          expectedValue++;
-        }
+  void onHintAnimationComplete() {
+    if (state.hintTileIndex != null) {
+      final tileIndex = state.tiles.indexOf(state.hintTileIndex!);
+      if (tileIndex != -1) {
+        moveTile(tileIndex);
       }
     }
-
-    state = state.copyWith(correctPositions: correctPositions);
   }
 
-  void _handleGameWin() {
-    final baseScore = state.difficulty.baseScore;
-    final timeBonus = max(0, state.difficulty.timeLimit - state.timeElapsed) * 10;
-    final moveBonus = max(0, state.difficulty.moveLimit - state.moves) * 20;
-    final hintPenalty = (state.difficulty.initialHints - state.hintsRemaining) * 100;
-    final finalScore = baseScore + timeBonus + moveBonus - hintPenalty;
+  int? _findCorrectMove() {
+    final tiles = state.tiles;
+    final emptyIndex = state.emptyTileIndex;
+    final size = sqrt(tiles.length).toInt();
 
-    state = state.copyWith(
-      status: GameStatus.completed,
-      score: max(0, finalScore),
-      bestScore: max(finalScore, state.bestScore),
-      bestTime: state.bestTime == 0 ? state.timeElapsed : min(state.timeElapsed, state.bestTime),
-      gamesWon: state.gamesWon + 1,
-      gamesPlayed: state.gamesPlayed + 1,
-      currentStreak: state.currentStreak + 1,
-      bestStreak: max(state.currentStreak + 1, state.bestStreak),
-      isComplete: true,
-      hasWon: true,
-    );
-    _timer?.cancel();
-  }
-
-  void _gameOver() {
-    state = state.copyWith(
-      status: GameStatus.gameOver,
-      gamesPlayed: state.gamesPlayed + 1,
-      currentStreak: 0,
-      isComplete: true,
-      hasWon: false,
-    );
-    _timer?.cancel();
-  }
-
-  (int, int) _findEmptyTile(List<List<int>> puzzle) {
-    for (var i = 0; i < puzzle.length; i++) {
-      for (var j = 0; j < puzzle[i].length; j++) {
-        if (puzzle[i][j] == 0) {
-          return (i, j);
-        }
-      }
-    }
-    return (-1, -1);
-  }
-
-  bool _isValidMove(int row, int col, (int, int) emptyTile) {
-    final (emptyRow, emptyCol) = emptyTile;
-    return (row == emptyRow && (col == emptyCol - 1 || col == emptyCol + 1)) ||
-           (col == emptyCol && (row == emptyRow - 1 || row == emptyRow + 1));
-  }
-
-  void _swapTiles(List<List<int>> puzzle, int row1, int col1, int row2, int col2) {
-    final temp = puzzle[row1][col1];
-    puzzle[row1][col1] = puzzle[row2][col2];
-    puzzle[row2][col2] = temp;
-  }
-
-  bool _isPuzzleSolved(List<List<int>> puzzle) {
-    int expectedValue = 1;
-    final totalTiles = puzzle.length * puzzle[0].length;
+    // Get possible moves
+    final possibleMoves = <int>[];
     
-    for (var i = 0; i < puzzle.length; i++) {
-      for (var j = 0; j < puzzle[i].length; j++) {
-        if (i == puzzle.length - 1 && j == puzzle[i].length - 1) {
-          return puzzle[i][j] == 0;
-        }
-        if (puzzle[i][j] != expectedValue) {
-          return false;
-        }
-        expectedValue++;
-      }
+    // Check left
+    if (emptyIndex % size > 0) {
+      possibleMoves.add(emptyIndex - 1);
     }
-    return true;
-  }
+    // Check right
+    if (emptyIndex % size < size - 1) {
+      possibleMoves.add(emptyIndex + 1);
+    }
+    // Check up
+    if (emptyIndex >= size) {
+      possibleMoves.add(emptyIndex - size);
+    }
+    // Check down
+    if (emptyIndex < tiles.length - size) {
+      possibleMoves.add(emptyIndex + size);
+    }
 
-  (int, int)? _findCorrectMove((int, int,) emptyTile) {
-    final (emptyRow, emptyCol) = emptyTile;
-    final directions = [
-      (-1, 0), // up
-      (1, 0),  // down
-      (0, -1), // left
-      (0, 1),  // right
-    ];
+    // Find the move that brings a tile closer to its correct position
+    int? bestMove;
+    int bestScore = -1;
 
-    for (final (dRow, dCol) in directions) {
-      final newRow = emptyRow + dRow;
-      final newCol = emptyCol + dCol;
+    for (final moveIndex in possibleMoves) {
+      final tile = tiles[moveIndex];
+      final currentDistance = _calculateManhattanDistance(moveIndex, tile - 1, size);
+      final newDistance = _calculateManhattanDistance(emptyIndex, tile - 1, size);
 
-      if (newRow >= 0 && newRow < state.puzzle.length &&
-          newCol >= 0 && newCol < state.puzzle[0].length) {
-        final value = state.puzzle[newRow][newCol];
-        final correctRow = (value - 1) ~/ state.puzzle.length;
-        final correctCol = (value - 1) % state.puzzle.length;
-
-        if (correctRow == emptyRow && correctCol == emptyCol) {
-          return (newRow, newCol);
+      if (newDistance < currentDistance) {
+        final score = currentDistance - newDistance;
+        if (score > bestScore) {
+          bestScore = score;
+          bestMove = tile;
         }
       }
     }
-    return null;
+
+    return bestMove;
   }
 
-  int _calculateMoveScore() {
-    final basePoints = 10;
-    final timeMultiplier = max(0, 1 - (state.timeElapsed / state.difficulty.timeLimit));
-    final streakBonus = state.currentStreak * 2;
-    return (basePoints * (1 + timeMultiplier) + streakBonus).round();
+  int _calculateManhattanDistance(int currentIndex, int targetIndex, int size) {
+    final currentRow = currentIndex ~/ size;
+    final currentCol = currentIndex % size;
+    final targetRow = targetIndex ~/ size;
+    final targetCol = targetIndex % size;
+    
+    return (currentRow - targetRow).abs() + (currentCol - targetCol).abs();
   }
 } 

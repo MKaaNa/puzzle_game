@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../features/game/models/game_state.dart';
+import '../../../features/game/models/game_difficulty.dart';
 
 class Settings {
   final bool isSoundEnabled;

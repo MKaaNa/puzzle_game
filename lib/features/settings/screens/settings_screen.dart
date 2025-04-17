@@ -4,6 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../providers/settings_provider.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../features/game/models/game_state.dart';
+import '../../../features/game/models/game_difficulty.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});

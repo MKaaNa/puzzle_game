@@ -10,9 +10,11 @@ import 'features/auth/screens/main_menu_screen.dart';
 import 'features/settings/screens/settings_screen.dart';
 import 'features/settings/providers/settings_provider.dart';
 import 'features/game/models/game_state.dart';
+import 'features/game/models/game_difficulty.dart';
 import 'features/game/widgets/puzzle_grid.dart';
 import 'features/game/providers/game_provider.dart';
 import 'core/providers/locale_provider.dart';
+import 'dart:math';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -128,9 +130,12 @@ class PuzzleGameScreen extends ConsumerWidget {
                         ),
                       )
                     : PuzzleGrid(
-                        puzzle: gameState.puzzle,
-                        onTileTap: (row, col) => ref.read(gameProvider.notifier).moveTile(row, col),
-                        correctPositions: gameState.correctPositions,
+                        puzzle: _convertTilesToGrid(gameState.tiles),
+                        onTileTap: (row, col) {
+                          final index = row * sqrt(gameState.tiles.length).toInt() + col;
+                          ref.read(gameProvider.notifier).moveTile(index);
+                        },
+                        correctPositions: _convertCorrectPositions(gameState.correctPositions),
                       ),
               ),
             ),
@@ -333,5 +338,24 @@ class PuzzleGameScreen extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  List<List<int>> _convertTilesToGrid(List<int> tiles) {
+    final size = sqrt(tiles.length).toInt();
+    final grid = List<List<int>>.generate(size, (_) => List<int>.filled(size, 0));
+    for (int i = 0; i < tiles.length; i++) {
+      final row = i ~/ size;
+      final col = i % size;
+      grid[row][col] = tiles[i];
+    }
+    return grid;
+  }
+
+  List<bool> _convertCorrectPositions(List<List<bool>> positions) {
+    final result = <bool>[];
+    for (final row in positions) {
+      result.addAll(row);
+    }
+    return result;
   }
 }
